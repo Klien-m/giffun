@@ -1,2 +1,1 @@
-include ':app'
-rootProject.name = "giffun"
+include ':core', ':network', 'main', ':opensource'
