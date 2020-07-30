@@ -50,13 +50,15 @@ class AntiWrapTextView(context: Context, attrs: AttributeSet) : TextView(context
 
         var textHeight = Math.ceil((fm.descent - fm.ascent).toDouble()).toInt()
         textHeight = (textHeight * layout.spacingMultiplier + layout
-                .spacingAdd).toInt()
+            .spacingAdd).toInt()
         //解决了最后一行文字间距过大的问题
         for (i in 0 until layout.lineCount) {
             val lineStart = layout.getLineStart(i)
             val lineEnd = layout.getLineEnd(i)
-            val width = StaticLayout.getDesiredWidth(text, lineStart,
-                    lineEnd, getPaint())
+            val width = StaticLayout.getDesiredWidth(
+                text, lineStart,
+                lineEnd, getPaint()
+            )
             val line = text.substring(lineStart, lineEnd)
 
             if (i < layout.lineCount - 1) {
@@ -87,7 +89,8 @@ class AntiWrapTextView(context: Context, attrs: AttributeSet) : TextView(context
         val gapCount = linein.length - 1
         var i = 0
         if (linein.length > 2 && linein[0].toInt() == 12288
-                && linein[1].toInt() == 12288) {
+            && linein[1].toInt() == 12288
+        ) {
             val substring = linein.substring(0, 2)
             val cw = StaticLayout.getDesiredWidth(substring, paint)
             Canvas.drawText(substring, x, mLineY.toFloat(), paint)

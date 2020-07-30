@@ -109,7 +109,8 @@ class WorldFeedsFragment : WaterFallFeedsFragment(), LoadDataListener {
                 if (activity.isNeedToRefresh) {
                     isLoadingMore = true // 此处将isLoadingMore设为true，防止因为内容不满一屏自动触发加载更多事件，从而让刷新进度条提前消失
                     activity.runOnUiThread { swipeRefresh.isRefreshing = true }
-                    GifFun.getHandler().postDelayed({ refreshFeeds() }, 1000) // 为了能看到刷新进度条，让刷新事件延迟1.5秒执行
+                    GifFun.getHandler()
+                        .postDelayed({ refreshFeeds() }, 1000) // 为了能看到刷新进度条，让刷新事件延迟1.5秒执行
                 }
             }
         }).start()
@@ -207,7 +208,10 @@ class WorldFeedsFragment : WaterFallFeedsFragment(), LoadDataListener {
                     loadFinished()
                 }
             } else {
-                logWarn(TAG, "Fetch feeds failed. ${GlobalUtil.getResponseClue(status, fetchWorldFeeds.msg)}")
+                logWarn(
+                    TAG,
+                    "Fetch feeds failed. ${GlobalUtil.getResponseClue(status, fetchWorldFeeds.msg)}"
+                )
                 activity.runOnUiThread {
                     showToast(GlobalUtil.getString(R.string.fetch_data_failed))
                     loadFailed(GlobalUtil.getString(R.string.fetch_data_failed) + ": " + response.status)

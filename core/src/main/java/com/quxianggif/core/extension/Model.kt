@@ -27,7 +27,7 @@ import kotlin.concurrent.thread
 fun <T : Model> findModelIndex(models: List<T>?, modelId: Long, action: (index: Int) -> Unit) {
     thread {
         var index = -1
-        if (models != null && !models.isEmpty()) {
+        if (models != null && models.isNotEmpty()) {
             for (i in models.indices) {
                 val model = models[i]
                 if (model.modelId == modelId) {
@@ -48,7 +48,7 @@ fun <T : Model> findModelIndex(models: List<T>?, modelId: Long, action: (index: 
 fun <T : Model> searchModelIndex(models: List<T>?, modelId: Long, action: (index: Int) -> Unit) {
     thread {
         var index = -1
-        if (models != null && !models.isEmpty()) {
+        if (models != null && models.isNotEmpty()) {
             for (i in models.indices) {
                 val model = models[i]
                 if (model.modelId == modelId) {

@@ -138,7 +138,11 @@ open class BaseFragment : Fragment(), RequestLifecycle {
      * @param listener
      * 按钮的点击事件回调
      */
-    protected fun showNoContentViewWithButton(tip: String, buttonText: String, listener: View.OnClickListener) {
+    protected fun showNoContentViewWithButton(
+        tip: String,
+        buttonText: String,
+        listener: View.OnClickListener
+    ) {
         if (noContentView != null) {
             noContentView?.visibility = View.VISIBLE
             return
@@ -192,7 +196,11 @@ open class BaseFragment : Fragment(), RequestLifecycle {
         mListener = listener
         val requestPermissionList = ArrayList<String>()
         for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(activity!!, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    activity!!,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestPermissionList.add(permission)
             }
         }
@@ -203,7 +211,11 @@ open class BaseFragment : Fragment(), RequestLifecycle {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             1 -> if (grantResults.isNotEmpty()) {

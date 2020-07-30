@@ -53,7 +53,7 @@ object FileUtil {
             }
             return true
         } catch (e: Exception) {
-           logError(TAG, e.message, e)
+            logError(TAG, e.message, e)
         } finally {
             if (bos != null) {
                 try {

@@ -64,7 +64,11 @@ open class AlbumFragment : BaseFragment() {
     /**
      * 指定相册中图片路径的列。
      */
-    var projection = arrayOf(MediaStore.MediaColumns._ID, MediaStore.MediaColumns.SIZE, MediaStore.MediaColumns.MIME_TYPE)
+    var projection = arrayOf(
+        MediaStore.MediaColumns._ID,
+        MediaStore.MediaColumns.SIZE,
+        MediaStore.MediaColumns.MIME_TYPE
+    )
 
     /**
      * 过滤相册中图片的类型，默认不过滤。
@@ -99,8 +103,10 @@ open class AlbumFragment : BaseFragment() {
         this.cropHeight = cropHeight
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                              savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return super.onCreateView(inflater.inflate(R.layout.fragment_album, container, false))
     }
 
@@ -127,17 +133,28 @@ open class AlbumFragment : BaseFragment() {
         override fun run() {
             var cursor: Cursor? = null
             try {
-                cursor = activity?.contentResolver?.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
-                        selection, selectionArgs, MediaStore.Images.Media.DATE_ADDED)
+                cursor = activity?.contentResolver?.query(
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection,
+                    selection, selectionArgs, MediaStore.Images.Media.DATE_ADDED
+                )
                 if (cursor != null) {
                     imageList.clear()
                     if (cursor.moveToLast()) {
                         do {
-                            val id = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
-                            val size = cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
-                            val mimeType = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE))
-                            val uri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id)
-                            logDebug(TAG, "uri is $uri , file size is $size , mime type is $mimeType")
+                            val id =
+                                cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns._ID))
+                            val size =
+                                cursor.getLong(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.SIZE))
+                            val mimeType =
+                                cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.MediaColumns.MIME_TYPE))
+                            val uri = ContentUris.withAppendedId(
+                                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                                id
+                            )
+                            logDebug(
+                                TAG,
+                                "uri is $uri , file size is $size , mime type is $mimeType"
+                            )
                             val image = Image(uri, size, mimeType)
                             if (image.size > 5 * 1024) {
                                 imageList.add(image)

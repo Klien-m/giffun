@@ -38,7 +38,8 @@ class FollowshipPagerAdapter(fm: FragmentManager) : FragmentPagerAdapter(fm) {
 
     private var followersFragment: FollowersFragment? = null
 
-    private val titles = arrayOf(GlobalUtil.getString(R.string.followings), GlobalUtil.getString(R.string.followers))
+    private val titles =
+        arrayOf(GlobalUtil.getString(R.string.followings), GlobalUtil.getString(R.string.followers))
 
     override fun getPageTitle(position: Int): CharSequence? {
         return titles[position]

@@ -44,9 +44,7 @@ import com.quxianggif.core.extension.showToast
 import com.quxianggif.core.extension.showToastOnUiThread
 import com.quxianggif.core.util.AndroidVersion
 import com.quxianggif.core.util.GlobalUtil
-import com.quxianggif.core.util.ImageUtil
 import com.quxianggif.feeds.ui.SelectGifActivity
-import com.quxianggif.util.FileUtil
 import kotlinx.android.synthetic.main.fragment_share_dialog.*
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
@@ -70,10 +68,14 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setStyle(BottomSheetDialogFragment.STYLE_NORMAL, R.style.TransparentBottomSheetDialogTheme)
+        setStyle(STYLE_NORMAL, R.style.TransparentBottomSheetDialogTheme)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_share_dialog, container, false)
     }
 
@@ -102,62 +104,79 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
     }
 
     private fun processShare(shareType: Int) {
-        handlePermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), object : PermissionListener {
-            override fun onGranted() {
-                when (shareType) {
-                    SHARE_QQ -> {
-                        if (!GlobalUtil.isQQInstalled()) {
-                            showToast(GlobalUtil.getString(R.string.your_phone_does_not_install_qq))
-                            return
-                        }
-                        share("com.tencent.mobileqq", "com.tencent.mobileqq.activity.JumpActivity")
-                    }
-                    SHARE_WECHAT -> {
-                        if (!GlobalUtil.isWechatInstalled()) {
-                            showToast(GlobalUtil.getString(R.string.your_phone_does_not_install_wechat))
-                            return
-                        }
-                        share("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI")
-                    }
-                    SHARE_WEIBO -> {
-                        if (!GlobalUtil.isWeiboInstalled()) {
-                            showToast(GlobalUtil.getString(R.string.your_phone_does_not_install_weibo))
-                            return
-                        }
-                        share("com.sina.weibo", "com.sina.weibo.composerinde.ComposerDispatchActivity")
-                    }
-                    SAVE_TO_PHONE -> {
-                        saveToSDCard()
-                    }
-                }
-            }
-
-            override fun onDenied(deniedPermissions: List<String>) {
-                var allNeverAskAgain = true
-                for (deniedPermission in deniedPermissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(attachedActivity, deniedPermission)) {
-                        allNeverAskAgain = false
-                        break
-                    }
-                }
-                // 所有的权限都被勾上不再询问时，跳转到应用设置界面，引导用户手动打开权限
-                if (allNeverAskAgain) {
-                    val dialog = AlertDialog.Builder(attachedActivity, R.style.GifFunAlertDialogStyle)
-                            .setMessage(GlobalUtil.getString(R.string.allow_storage_permission_please))
-                            .setPositiveButton(GlobalUtil.getString(R.string.settings)) { _, _ ->
-                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                val uri = Uri.fromParts("package", GlobalUtil.appPackage, null)
-                                intent.data = uri
-                                attachedActivity.startActivityForResult(intent, SelectGifActivity.REQUEST_PERMISSION_SETTING)
+        handlePermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            object : PermissionListener {
+                override fun onGranted() {
+                    when (shareType) {
+                        SHARE_QQ -> {
+                            if (!GlobalUtil.isQQInstalled()) {
+                                showToast(GlobalUtil.getString(R.string.your_phone_does_not_install_qq))
+                                return
                             }
-                            .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
-                            .create()
-                    dialog.show()
-                } else {
-                    showToast(GlobalUtil.getString(R.string.must_agree_permission_to_share))
+                            share(
+                                "com.tencent.mobileqq",
+                                "com.tencent.mobileqq.activity.JumpActivity"
+                            )
+                        }
+                        SHARE_WECHAT -> {
+                            if (!GlobalUtil.isWechatInstalled()) {
+                                showToast(GlobalUtil.getString(R.string.your_phone_does_not_install_wechat))
+                                return
+                            }
+                            share("com.tencent.mm", "com.tencent.mm.ui.tools.ShareImgUI")
+                        }
+                        SHARE_WEIBO -> {
+                            if (!GlobalUtil.isWeiboInstalled()) {
+                                showToast(GlobalUtil.getString(R.string.your_phone_does_not_install_weibo))
+                                return
+                            }
+                            share(
+                                "com.sina.weibo",
+                                "com.sina.weibo.composerinde.ComposerDispatchActivity"
+                            )
+                        }
+                        SAVE_TO_PHONE -> {
+                            saveToSDCard()
+                        }
+                    }
                 }
-            }
-        })
+
+                override fun onDenied(deniedPermissions: List<String>) {
+                    var allNeverAskAgain = true
+                    for (deniedPermission in deniedPermissions) {
+                        if (ActivityCompat.shouldShowRequestPermissionRationale(
+                                attachedActivity,
+                                deniedPermission
+                            )
+                        ) {
+                            allNeverAskAgain = false
+                            break
+                        }
+                    }
+                    // 所有的权限都被勾上不再询问时，跳转到应用设置界面，引导用户手动打开权限
+                    if (allNeverAskAgain) {
+                        val dialog =
+                            AlertDialog.Builder(attachedActivity, R.style.GifFunAlertDialogStyle)
+                                .setMessage(GlobalUtil.getString(R.string.allow_storage_permission_please))
+                                .setPositiveButton(GlobalUtil.getString(R.string.settings)) { _, _ ->
+                                    val intent =
+                                        Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                    val uri = Uri.fromParts("package", GlobalUtil.appPackage, null)
+                                    intent.data = uri
+                                    attachedActivity.startActivityForResult(
+                                        intent,
+                                        SelectGifActivity.REQUEST_PERMISSION_SETTING
+                                    )
+                                }
+                                .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
+                                .create()
+                        dialog.show()
+                    } else {
+                        showToast(GlobalUtil.getString(R.string.must_agree_permission_to_share))
+                    }
+                }
+            })
     }
 
     private fun share(packageName: String, className: String) {
@@ -180,7 +199,10 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
 
     private fun saveToSDCard() {
         if (saveGifToAlbum() != null) {
-            showToastOnUiThread(GlobalUtil.getString(R.string.save_gif_to_album_success), Toast.LENGTH_LONG)
+            showToastOnUiThread(
+                GlobalUtil.getString(R.string.save_gif_to_album_success),
+                Toast.LENGTH_LONG
+            )
         } else {
             showToastOnUiThread(GlobalUtil.getString(R.string.save_failed))
         }
@@ -199,9 +221,15 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
         if (AndroidVersion.hasQ()) {
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
         } else {
-            values.put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/${Environment.DIRECTORY_DCIM}/$name")
+            values.put(
+                MediaStore.MediaColumns.DATA,
+                "${Environment.getExternalStorageDirectory().path}/${Environment.DIRECTORY_DCIM}/$name"
+            )
         }
-        val uri = GifFun.getContext().contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
+        val uri = GifFun.getContext().contentResolver.insert(
+            MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+            values
+        )
         if (uri == null) {
             logWarn(TAG, "uri is null")
             return null
@@ -217,7 +245,7 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
         val buffer = ByteArray(1024)
         var bytes = bis.read(buffer)
         while (bytes >= 0) {
-            bos.write(buffer, 0 , bytes)
+            bos.write(buffer, 0, bytes)
             bos.flush()
             bytes = bis.read(buffer)
         }
@@ -241,7 +269,11 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
         mListener = listener
         val requestPermissionList = ArrayList<String>()
         for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(attachedActivity, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    attachedActivity,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestPermissionList.add(permission)
             }
         }
@@ -252,7 +284,11 @@ open class ShareDialogFragment : BottomSheetDialogFragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             1 -> if (grantResults.isNotEmpty()) {

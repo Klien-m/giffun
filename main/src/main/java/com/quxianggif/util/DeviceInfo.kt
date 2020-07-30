@@ -39,7 +39,8 @@ object DeviceInfo {
      */
     val screenWidth: Int
         get() {
-            val windowManager = GifFun.getContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val windowManager =
+                GifFun.getContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val metrics = DisplayMetrics()
             if (AndroidVersion.hasJellyBeanMR1()) {
                 windowManager.defaultDisplay.getRealMetrics(metrics)
@@ -56,7 +57,8 @@ object DeviceInfo {
      */
     val screenHeight: Int
         get() {
-            val windowManager = GifFun.getContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
+            val windowManager =
+                GifFun.getContext().getSystemService(Context.WINDOW_SERVICE) as WindowManager
             val metrics = DisplayMetrics()
             if (AndroidVersion.hasJellyBeanMR1()) {
                 windowManager.defaultDisplay.getRealMetrics(metrics)

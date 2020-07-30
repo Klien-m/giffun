@@ -25,6 +25,7 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * MD5加密辅助工具类。
+ *
  * @author guolin
  * @since 17/2/14
  */
@@ -34,8 +35,8 @@ public class MD5 {
 
     /**
      * 对传入的字符串进行MD5加密。
-     * @param origin
-     *          原始字符串。
+     *
+     * @param origin 原始字符串。
      * @return 经过MD5加密后的字符串。
      */
     public static String encrypt(String origin) {
@@ -51,8 +52,8 @@ public class MD5 {
 
     /**
      * 获取文件的MD5值。
-     * @param path
-     *          文件的路径
+     *
+     * @param path 文件的路径
      * @return 文件的MD5值。
      */
     public static String getFileMD5(String path) {

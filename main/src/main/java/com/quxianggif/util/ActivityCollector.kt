@@ -58,5 +58,4 @@ object ActivityCollector {
             activityList.clear()
         }
     }
-
 }

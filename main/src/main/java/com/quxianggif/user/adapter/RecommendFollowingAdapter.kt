@@ -49,15 +49,27 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation
  * @author guolin
  * @since 18/3/20
  */
-class RecommendFollowingAdapter(private val activity: Activity, private val userList: List<User>) : RecyclerView.Adapter<RecommendFollowingAdapter.RecommendFollowingViewHolder>() {
+class RecommendFollowingAdapter(private val activity: Activity, private val userList: List<User>) :
+    RecyclerView.Adapter<RecommendFollowingAdapter.RecommendFollowingViewHolder>() {
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecommendFollowingViewHolder {
-        val view = LayoutInflater.from(activity).inflate(R.layout.recommend_following_item, parent, false)
+    override fun onCreateViewHolder(
+        parent: ViewGroup,
+        viewType: Int
+    ): RecommendFollowingViewHolder {
+        val view =
+            LayoutInflater.from(activity).inflate(R.layout.recommend_following_item, parent, false)
         val holder = RecommendFollowingViewHolder(view)
         holder.rootLayout.setOnClickListener {
             val position = holder.adapterPosition
             val user = userList[position]
-            UserHomePageActivity.actionStart(activity, holder.avatar, user.userId, user.nickname, user.avatar, user.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                user.userId,
+                user.nickname,
+                user.avatar,
+                user.bgImage
+            )
         }
         holder.followsButton.setOnClickListener {
             val position = holder.adapterPosition
@@ -83,7 +95,11 @@ class RecommendFollowingAdapter(private val activity: Activity, private val user
             holder.description.text = user.description
         }
 
-        holder.feedsAndFollowersCount.text = String.format(GlobalUtil.getString(R.string.feeds_and_followers_count), GlobalUtil.getConvertedNumber(user.feedsCount), GlobalUtil.getConvertedNumber(user.followersCount))
+        holder.feedsAndFollowersCount.text = String.format(
+            GlobalUtil.getString(R.string.feeds_and_followers_count),
+            GlobalUtil.getConvertedNumber(user.feedsCount),
+            GlobalUtil.getConvertedNumber(user.followersCount)
+        )
         if (user.isFollowing) {
             holder.followsButton.setBackgroundResource(R.drawable.followed_button_bg)
         } else {
@@ -91,19 +107,19 @@ class RecommendFollowingAdapter(private val activity: Activity, private val user
         }
         if (user.avatar.isBlank()) {
             Glide.with(activity)
-                 .load(R.drawable.avatar_default)
-                 .bitmapTransform(CropCircleTransformation(activity))
-                 .placeholder(R.drawable.loading_bg_circle)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(holder.avatar)
+                .load(R.drawable.avatar_default)
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.avatar)
         } else {
             Glide.with(activity)
-                 .load(CustomUrl(user.avatar))
-                 .bitmapTransform(CropCircleTransformation(activity))
-                 .placeholder(R.drawable.loading_bg_circle)
-                 .error(R.drawable.avatar_default)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(holder.avatar)
+                .load(CustomUrl(user.avatar))
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.avatar)
         }
     }
 

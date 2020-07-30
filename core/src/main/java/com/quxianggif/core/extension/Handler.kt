@@ -26,13 +26,13 @@ import android.view.View
  * @since 2018/7/8
  */
 
-inline fun Handler.postDelayed(delayMillis: Long, crossinline action: () -> Unit) : Runnable {
+inline fun Handler.postDelayed(delayMillis: Long, crossinline action: () -> Unit): Runnable {
     val runnable = Runnable { action() }
     postDelayed(runnable, delayMillis)
     return runnable
 }
 
-inline fun View.postDelayed(delayMillis: Long, crossinline action: () -> Unit) : Runnable {
+inline fun View.postDelayed(delayMillis: Long, crossinline action: () -> Unit): Runnable {
     val runnable = Runnable { action() }
     postDelayed(runnable, delayMillis)
     return runnable

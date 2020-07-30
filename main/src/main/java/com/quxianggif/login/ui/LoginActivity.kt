@@ -67,15 +67,19 @@ abstract class LoginActivity : AuthActivity() {
 
         private const val TAG = "LoginActivity"
 
-        @JvmStatic val START_WITH_TRANSITION = "start_with_transition"
+        @JvmStatic
+        val START_WITH_TRANSITION = "start_with_transition"
 
-        @JvmStatic val INTENT_HAS_NEW_VERSION = "intent_has_new_version"
+        @JvmStatic
+        val INTENT_HAS_NEW_VERSION = "intent_has_new_version"
 
-        @JvmStatic val INTENT_VERSION = "intent_version"
+        @JvmStatic
+        val INTENT_VERSION = "intent_version"
 
         private val ACTION_LOGIN = "${GifFun.getPackageName()}.ACTION_LOGIN"
 
-        private val ACTION_LOGIN_WITH_TRANSITION = "${GifFun.getPackageName()}.ACTION_LOGIN_WITH_TRANSITION"
+        private val ACTION_LOGIN_WITH_TRANSITION =
+            "${GifFun.getPackageName()}.ACTION_LOGIN_WITH_TRANSITION"
 
         /**
          * 启动LoginActivity。
@@ -102,15 +106,22 @@ abstract class LoginActivity : AuthActivity() {
          * @param logo
          * 要执行transition动画的控件
          */
-        fun actionStartWithTransition(activity: Activity, logo: View, hasNewVersion: Boolean, version: Version?) {
+        fun actionStartWithTransition(
+            activity: Activity,
+            logo: View,
+            hasNewVersion: Boolean,
+            version: Version?
+        ) {
             val intent = Intent(ACTION_LOGIN_WITH_TRANSITION).apply {
                 putExtra(INTENT_HAS_NEW_VERSION, hasNewVersion)
                 putExtra(INTENT_VERSION, version)
             }
             if (AndroidVersion.hasLollipop()) {
                 intent.putExtra(START_WITH_TRANSITION, true)
-                val options = ActivityOptions.makeSceneTransitionAnimation(activity, logo,
-                        activity.getString(R.string.transition_logo_splash))
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    activity, logo,
+                    activity.getString(R.string.transition_logo_splash)
+                )
                 activity.startActivity(intent, options.toBundle())
             } else {
                 activity.startActivity(intent)

@@ -45,8 +45,10 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation
  * @author guolin
  * @since 17/7/25
  */
-class FollowshipAdapter(private val fragment: BaseFollowshipFragment, private val userList: List<User>,
-                        private val layoutManager: RecyclerView.LayoutManager?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class FollowshipAdapter(
+    private val fragment: BaseFollowshipFragment, private val userList: List<User>,
+    private val layoutManager: RecyclerView.LayoutManager?
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val activity: FollowshipActivity = fragment.activity
 
@@ -77,7 +79,14 @@ class FollowshipAdapter(private val fragment: BaseFollowshipFragment, private va
         holder.rootLayout.setOnClickListener {
             val position = holder.adapterPosition
             val user = userList[position]
-            UserHomePageActivity.actionStart(activity, holder.avatar, user.userId, user.nickname, user.avatar, user.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                user.userId,
+                user.nickname,
+                user.avatar,
+                user.bgImage
+            )
         }
         return holder
     }
@@ -108,12 +117,12 @@ class FollowshipAdapter(private val fragment: BaseFollowshipFragment, private va
         }
 
         Glide.with(activity)
-                .load(CustomUrl(user.avatar))
-                .bitmapTransform(CropCircleTransformation(activity))
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.avatar)
+            .load(CustomUrl(user.avatar))
+            .bitmapTransform(CropCircleTransformation(activity))
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(holder.avatar)
 
         if (layoutManager != null) {
             val visibleItemCount = layoutManager.childCount
@@ -159,7 +168,8 @@ class FollowshipAdapter(private val fragment: BaseFollowshipFragment, private va
         } else TYPE_LOADING_MORE
     }
 
-    private class FollowshipViewHolder internal constructor(view: View) : RecyclerView.ViewHolder(view) {
+    private class FollowshipViewHolder internal constructor(view: View) :
+        RecyclerView.ViewHolder(view) {
 
         val rootLayout: LinearLayout = view as LinearLayout
 

@@ -37,7 +37,7 @@ class SelectGifActivity : BaseActivity() {
 
     lateinit var currentFragment: Fragment
 
-    var selectedFragment: Int = 0
+    private var selectedFragment: Int = 0
 
     var rootPath: String = ""
 
@@ -57,17 +57,19 @@ class SelectGifActivity : BaseActivity() {
     }
 
     private fun refreshPermissionStatus() {
-        handlePermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), object : PermissionListener {
-            override fun onGranted() {
-                permissionsGranted()
-            }
+        handlePermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            object : PermissionListener {
+                override fun onGranted() {
+                    permissionsGranted()
+                }
 
-            override fun onDenied(deniedPermissions: List<String>) {
-                val fragment = NeedPermissionFragment()
-                fragment.setPermissions(deniedPermissions.toTypedArray())
-                replaceFragment(fragment)
-            }
-        })
+                override fun onDenied(deniedPermissions: List<String>) {
+                    val fragment = NeedPermissionFragment()
+                    fragment.setPermissions(deniedPermissions.toTypedArray())
+                    replaceFragment(fragment)
+                }
+            })
     }
 
     override fun permissionsGranted() {

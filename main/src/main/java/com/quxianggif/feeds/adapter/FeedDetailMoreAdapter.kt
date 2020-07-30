@@ -57,7 +57,11 @@ import java.util.*
  * @author guolin
  * @since 17/6/4
  */
-class FeedDetailMoreAdapter(private val activity: FeedDetailActivity, private val detailInfo: View, private val feed: BaseFeed) : RecyclerView.Adapter<FeedDetailMoreAdapter.SimpleViewHolder>() {
+class FeedDetailMoreAdapter(
+    private val activity: FeedDetailActivity,
+    private val detailInfo: View,
+    private val feed: BaseFeed
+) : RecyclerView.Adapter<FeedDetailMoreAdapter.SimpleViewHolder>() {
 
     private var commentEdit: EditText? = null
 
@@ -86,12 +90,14 @@ class FeedDetailMoreAdapter(private val activity: FeedDetailActivity, private va
     }
 
     private fun createLoadingCommentsHolder(parent: ViewGroup): SimpleViewHolder {
-        val loadingView = LayoutInflater.from(activity).inflate(R.layout.loading_comments, parent, false)
+        val loadingView =
+            LayoutInflater.from(activity).inflate(R.layout.loading_comments, parent, false)
         return SimpleViewHolder(loadingView)
     }
 
     private fun createHotCommentsHolder(parent: ViewGroup): SimpleViewHolder {
-        val hotCommentsView = LayoutInflater.from(activity).inflate(R.layout.top_comments, parent, false)
+        val hotCommentsView =
+            LayoutInflater.from(activity).inflate(R.layout.top_comments, parent, false)
         hotComments?.let { it ->
             val viewAllComments = hotCommentsView.findViewById<TextView>(R.id.viewAllComments)
             val recyclerView = hotCommentsView.findViewById<RecyclerView>(R.id.recyclerView)
@@ -99,13 +105,19 @@ class FeedDetailMoreAdapter(private val activity: FeedDetailActivity, private va
             (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
             hotCommentsAdapter = HotCommentsAdapter(activity, it)
             recyclerView.adapter = hotCommentsAdapter
-            viewAllComments.setOnClickListener { _ -> CommentsActivity.actionStart(activity, feed.feedId) }
+            viewAllComments.setOnClickListener { _ ->
+                CommentsActivity.actionStart(
+                    activity,
+                    feed.feedId
+                )
+            }
         }
         return SimpleViewHolder(hotCommentsView)
     }
 
     private fun createNoCommentHolder(parent: ViewGroup): SimpleViewHolder {
-        val noCommentView = LayoutInflater.from(activity).inflate(R.layout.no_comment, parent, false)
+        val noCommentView =
+            LayoutInflater.from(activity).inflate(R.layout.no_comment, parent, false)
         val noCommentText = noCommentView.findViewById<TextView>(R.id.noCommentText)
         if (commentCount == -2) {
             noCommentText.text = GlobalUtil.getString(R.string.your_network_bad_comment_load_failed)
@@ -114,18 +126,19 @@ class FeedDetailMoreAdapter(private val activity: FeedDetailActivity, private va
     }
 
     private fun createEnterCommentHolder(parent: ViewGroup): SimpleViewHolder {
-        val enterCommentView = LayoutInflater.from(activity).inflate(R.layout.enter_comment, parent, false)
+        val enterCommentView =
+            LayoutInflater.from(activity).inflate(R.layout.enter_comment, parent, false)
         commentEdit = enterCommentView.findViewById(R.id.commentEdit)
         avatarMe = enterCommentView.findViewById(R.id.avatarMe)
         postComment = enterCommentView.findViewById(R.id.postComment)
 
         Glide.with(activity)
-                .load(CustomUrl(UserUtil.avatar))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .bitmapTransform(CropCircleTransformation(activity))
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .into(avatarMe)
+            .load(CustomUrl(UserUtil.avatar))
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .bitmapTransform(CropCircleTransformation(activity))
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .into(avatarMe)
         postComment!!.setOnClickListener {
             val content = commentEdit!!.text.toString().trim()
             if (TextUtils.isEmpty(content)) {
@@ -194,7 +207,7 @@ class FeedDetailMoreAdapter(private val activity: FeedDetailActivity, private va
      */
     fun refreshCommentsGood(commentId: Long, goodType: Int, goodCount: Int) {
         Thread(Runnable {
-            if (hotCommentsAdapter != null && hotComments != null && !hotComments!!.isEmpty()) {
+            if (hotCommentsAdapter != null && hotComments != null && hotComments!!.isNotEmpty()) {
                 for (i in hotComments!!.indices) {
                     val comment = hotComments!![i]
                     if (comment.commentId == commentId) {
@@ -278,13 +291,27 @@ class FeedDetailMoreAdapter(private val activity: FeedDetailActivity, private va
                     } else if (status == 10402) {
                         val timeLeft = response.msg.toLong()
                         if (DateUtil.isBlockedForever(timeLeft)) {
-                            showToast(GlobalUtil.getString(R.string.unable_to_post_comment_forever), Toast.LENGTH_LONG)
+                            showToast(
+                                GlobalUtil.getString(R.string.unable_to_post_comment_forever),
+                                Toast.LENGTH_LONG
+                            )
                         } else {
                             val tip = DateUtil.getTimeLeftTip(timeLeft)
-                            showToast(String.format(GlobalUtil.getString(R.string.unable_to_post_comment), tip), Toast.LENGTH_LONG)
+                            showToast(
+                                String.format(
+                                    GlobalUtil.getString(R.string.unable_to_post_comment),
+                                    tip
+                                ), Toast.LENGTH_LONG
+                            )
                         }
                     } else {
-                        logWarn(TAG, "Post comment failed. " + GlobalUtil.getResponseClue(status, response.msg))
+                        logWarn(
+                            TAG,
+                            "Post comment failed. " + GlobalUtil.getResponseClue(
+                                status,
+                                response.msg
+                            )
+                        )
                         showToast(GlobalUtil.getString(R.string.post_comment_failed))
                     }
                 }

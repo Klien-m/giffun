@@ -82,8 +82,7 @@ abstract class AuthActivity : BaseActivity() {
                 }
                 if (!ResponseHandler.handleResponse(response)) {
                     val baseinfo = response as GetBaseinfo
-                    val status = baseinfo.status
-                    when (status) {
+                    when (val status = baseinfo.status) {
                         0 -> {
                             UserUtil.saveNickname(baseinfo.nickname)
                             UserUtil.saveAvatar(baseinfo.avatar)
@@ -97,7 +96,13 @@ abstract class AuthActivity : BaseActivity() {
                             finish()
                         }
                         else -> {
-                            logWarn(TAG, "Get user baseinfo failed. " + GlobalUtil.getResponseClue(status, baseinfo.msg))
+                            logWarn(
+                                TAG,
+                                "Get user baseinfo failed. " + GlobalUtil.getResponseClue(
+                                    status,
+                                    baseinfo.msg
+                                )
+                            )
                             showToast(GlobalUtil.getString(R.string.get_baseinfo_failed))
                             GifFun.logout()
                             finish()

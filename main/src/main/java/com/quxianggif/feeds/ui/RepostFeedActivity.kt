@@ -87,10 +87,10 @@ class RepostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEdit
             feedUser.text = refFeed.nickname
             feedContent.text = refFeed.content
             Glide.with(this)
-                    .load(refFeed.cover)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .placeholder(R.drawable.album_loading_bg)
-                    .into(feedCover)
+                .load(refFeed.cover)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .placeholder(R.drawable.album_loading_bg)
+                .into(feedCover)
 
             rootLayout.setOnClickListener(this)
             contentEdit.setOnEditorActionListener(this)
@@ -159,14 +159,32 @@ class RepostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEdit
                     } else if (status == 10301) {
                         val timeLeft = repostFeed.msg.toLong()
                         if (DateUtil.isBlockedForever(timeLeft)) {
-                            showToast(GlobalUtil.getString(R.string.unable_to_repost_feed_forever), Toast.LENGTH_LONG)
+                            showToast(
+                                GlobalUtil.getString(R.string.unable_to_repost_feed_forever),
+                                Toast.LENGTH_LONG
+                            )
                         } else {
                             val tip = DateUtil.getTimeLeftTip(timeLeft)
-                            showToast(String.format(GlobalUtil.getString(R.string.unable_to_repost_feed), tip), Toast.LENGTH_LONG)
+                            showToast(
+                                String.format(
+                                    GlobalUtil.getString(R.string.unable_to_repost_feed),
+                                    tip
+                                ), Toast.LENGTH_LONG
+                            )
                         }
                     } else {
-                        logWarn(TAG, "Repost feed failed. " + GlobalUtil.getResponseClue(status, repostFeed.msg))
-                        showToast(GlobalUtil.getString(R.string.repost_failed) + GlobalUtil.getString(R.string.unknown_error))
+                        logWarn(
+                            TAG,
+                            "Repost feed failed. " + GlobalUtil.getResponseClue(
+                                status,
+                                repostFeed.msg
+                            )
+                        )
+                        showToast(
+                            GlobalUtil.getString(R.string.repost_failed) + GlobalUtil.getString(
+                                R.string.unknown_error
+                            )
+                        )
                     }
                 }
             }

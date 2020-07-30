@@ -74,7 +74,7 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
 
     private lateinit var postFeedProgress: ProgressDialog
 
-    var overrideWidth: Int = 0
+    private var overrideWidth: Int = 0
 
     var overrideHeight: Int = 0
 
@@ -173,22 +173,22 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
     private fun exit() {
         if (contentEdit.text.toString().isNotBlank() || gifPlayTarget?.gifUri != null) {
             val dialog = AlertDialog.Builder(this, R.style.GifFunAlertDialogStyle)
-                    .setMessage(GlobalUtil.getString(R.string.save_to_draft_or_not))
-                    .setPositiveButton(GlobalUtil.getString(R.string.save)) { _, _ ->
-                        val gifUri = gifPlayTarget?.gifUri
-                        val draft = Draft(gifUri?.toString() ?: "", contentEdit.text.toString(), Date())
-                        draft.save()
-                        val event = SaveDraftEvent()
-                        EventBus.getDefault().post(event)
-                        finish()
-                        showToast(GlobalUtil.getString(R.string.save_to_draft_success))
-                    }
-                    .setNegativeButton(GlobalUtil.getString(R.string.give_up)) { _, _ ->
-                        val event = DiscardDraftEvent()
-                        EventBus.getDefault().post(event)
-                        finish()
-                    }
-                    .create()
+                .setMessage(GlobalUtil.getString(R.string.save_to_draft_or_not))
+                .setPositiveButton(GlobalUtil.getString(R.string.save)) { _, _ ->
+                    val gifUri = gifPlayTarget?.gifUri
+                    val draft = Draft(gifUri?.toString() ?: "", contentEdit.text.toString(), Date())
+                    draft.save()
+                    val event = SaveDraftEvent()
+                    EventBus.getDefault().post(event)
+                    finish()
+                    showToast(GlobalUtil.getString(R.string.save_to_draft_success))
+                }
+                .setNegativeButton(GlobalUtil.getString(R.string.give_up)) { _, _ ->
+                    val event = DiscardDraftEvent()
+                    EventBus.getDefault().post(event)
+                    finish()
+                }
+                .create()
             dialog.show()
         } else {
             finish()
@@ -222,7 +222,12 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
             PostFeed.getResponse(it.gifUri, feedContent, it.firstFrame, object : ProgressCallback {
                 override fun onProgress(percent: Double) {
                     val percentInt = (percent * 100).toInt()
-                    postFeedProgress.setMessage(String.format(GlobalUtil.getString(R.string.uploading_gif), percentInt))
+                    postFeedProgress.setMessage(
+                        String.format(
+                            GlobalUtil.getString(R.string.uploading_gif),
+                            percentInt
+                        )
+                    )
                 }
 
                 override fun onResponse(response: Response) {
@@ -249,14 +254,32 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
                         } else if (status == 10301) {
                             val timeLeft = postFeed.msg.toLong()
                             if (DateUtil.isBlockedForever(timeLeft)) {
-                                showToast(GlobalUtil.getString(R.string.unable_to_post_feed_forever), Toast.LENGTH_LONG)
+                                showToast(
+                                    GlobalUtil.getString(R.string.unable_to_post_feed_forever),
+                                    Toast.LENGTH_LONG
+                                )
                             } else {
                                 val tip = DateUtil.getTimeLeftTip(timeLeft)
-                                showToast(String.format(GlobalUtil.getString(R.string.unable_to_post_feed), tip), Toast.LENGTH_LONG)
+                                showToast(
+                                    String.format(
+                                        GlobalUtil.getString(R.string.unable_to_post_feed),
+                                        tip
+                                    ), Toast.LENGTH_LONG
+                                )
                             }
                         } else {
-                            logWarn(TAG, "Post feed failed. " + GlobalUtil.getResponseClue(status, postFeed.msg))
-                            showToast(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.unknown_error))
+                            logWarn(
+                                TAG,
+                                "Post feed failed. " + GlobalUtil.getResponseClue(
+                                    status,
+                                    postFeed.msg
+                                )
+                            )
+                            showToast(
+                                GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                    R.string.unknown_error
+                                )
+                            )
                         }
                     }
                 }
@@ -267,31 +290,59 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
                     if (e is PostFeedException) {
                         when (e.message) {
                             PostFeedException.GIF_PATH_OR_FEED_CONTENT_IS_NULL -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.field_missing))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.field_missing
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.GIF_FORMAT_IS_INCORRECT -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.gif_format_error))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.gif_format_error
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.GIF_IS_LARGER_THAN_20_MB -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.gif_larger_than_20_mb))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.gif_larger_than_20_mb
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.GIF_COVER_IS_UNREACHABLE -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.gif_cover_is_unreachable))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.gif_cover_is_unreachable
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.GIF_WIDTH_OR_HEIGHT_IS_INVALID -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.gif_width_or_height_invalid))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.gif_width_or_height_invalid
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.GIF_IS_TOO_WIDE_OR_TOO_NARROW -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.gif_is_too_wide_or_too_narrow))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.gif_is_too_wide_or_too_narrow
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.GIF_MD5_EXCEPTION -> {
-                                showToastOnUiThread(GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(R.string.gif_md5_exception))
+                                showToastOnUiThread(
+                                    GlobalUtil.getString(R.string.post_failed) + GlobalUtil.getString(
+                                        R.string.gif_md5_exception
+                                    )
+                                )
                                 return
                             }
                             PostFeedException.LOGIN_STATUS_EXPIRED -> return
@@ -313,21 +364,32 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
     private fun preloadSelectedGif(imageUri: Uri?) {
         if (imageUri == null) return
         Glide.with(this)
-                .load(imageUri)
-                .asGif()
-                .listener(object : RequestListener<Uri, GifDrawable> {
-                    override fun onException(e: Exception?, model: Uri, target: Target<GifDrawable>, isFirstResource: Boolean): Boolean {
-                        showToast(GlobalUtil.getString(R.string.gif_format_error))
-                        return true
-                    }
+            .load(imageUri)
+            .asGif()
+            .listener(object : RequestListener<Uri, GifDrawable> {
+                override fun onException(
+                    e: Exception?,
+                    model: Uri,
+                    target: Target<GifDrawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    showToast(GlobalUtil.getString(R.string.gif_format_error))
+                    return true
+                }
 
-                    override fun onResourceReady(resource: GifDrawable, model: Uri, target: Target<GifDrawable>, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                        calculateWidgetValues(resource, imageUri)
-                        return true
-                    }
-                })
-                .diskCacheStrategy(DiskCacheStrategy.NONE)
-                .preload()
+                override fun onResourceReady(
+                    resource: GifDrawable,
+                    model: Uri,
+                    target: Target<GifDrawable>,
+                    isFromMemoryCache: Boolean,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    calculateWidgetValues(resource, imageUri)
+                    return true
+                }
+            })
+            .diskCacheStrategy(DiskCacheStrategy.NONE)
+            .preload()
     }
 
     /**
@@ -359,23 +421,39 @@ class PostFeedActivity : BaseActivity(), View.OnClickListener, TextView.OnEditor
             selectedGif.layoutParams.height = overrideHeight
 
             val loopForever = PreferenceManager.getDefaultSharedPreferences(this)
-                    .getBoolean(getString(R.string.key_loop_gif_play), true)
+                .getBoolean(getString(R.string.key_loop_gif_play), true)
             gifPlayTarget = GifPlayTarget(selectedGif, imageUri, firstFrame, loopForever)
             Glide.with(this)
-                    .load(imageUri)
-                    .diskCacheStrategy(DiskCacheStrategy.NONE)
-                    .listener(object : RequestListener<Uri, GlideDrawable> {
-                        override fun onException(e: Exception, model: Uri, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-                            return false
-                        }
+                .load(imageUri)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
+                .listener(object : RequestListener<Uri, GlideDrawable> {
+                    override fun onException(
+                        e: Exception,
+                        model: Uri,
+                        target: Target<GlideDrawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
 
-                        override fun onResourceReady(resource: GlideDrawable, model: Uri, target: Target<GlideDrawable>, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                            closeButton.visibility = View.VISIBLE
-                            postWallLayout.setBackgroundColor(ContextCompat.getColor(this@PostFeedActivity, R.color.black))
-                            return false
-                        }
-                    })
-                    .into<GifPlayTarget>(gifPlayTarget)
+                    override fun onResourceReady(
+                        resource: GlideDrawable,
+                        model: Uri,
+                        target: Target<GlideDrawable>,
+                        isFromMemoryCache: Boolean,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        closeButton.visibility = View.VISIBLE
+                        postWallLayout.setBackgroundColor(
+                            ContextCompat.getColor(
+                                this@PostFeedActivity,
+                                R.color.black
+                            )
+                        )
+                        return false
+                    }
+                })
+                .into<GifPlayTarget>(gifPlayTarget)
             showGifLayout()
         } else {
             showToast(GlobalUtil.getString(R.string.unknown_error))

@@ -148,7 +148,8 @@ open class BaseActivity : AppCompatActivity(), RequestLifecycle {
     protected fun transparentStatusBar() {
         if (AndroidVersion.hasLollipop()) {
             val decorView = window.decorView
-            decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+            decorView.systemUiVisibility =
+                View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
             window.statusBarColor = Color.TRANSPARENT
         }
     }
@@ -168,11 +169,15 @@ open class BaseActivity : AppCompatActivity(), RequestLifecycle {
         mListener = listener
         val requestPermissionList = ArrayList<String>()
         for (permission in permissions) {
-            if (ContextCompat.checkSelfPermission(activity!!, permission) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    activity!!,
+                    permission
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 requestPermissionList.add(permission)
             }
         }
-        if (!requestPermissionList.isEmpty()) {
+        if (requestPermissionList.isNotEmpty()) {
             ActivityCompat.requestPermissions(activity!!, requestPermissionList.toTypedArray(), 1)
         } else {
             listener.onGranted()
@@ -285,7 +290,7 @@ open class BaseActivity : AppCompatActivity(), RequestLifecycle {
     /**
      * 将bad network view进行隐藏。
      */
-    protected fun hideBadNetworkView() {
+    private fun hideBadNetworkView() {
         badNetworkView?.visibility = View.GONE
     }
 
@@ -335,7 +340,11 @@ open class BaseActivity : AppCompatActivity(), RequestLifecycle {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             1 -> if (grantResults.isNotEmpty()) {

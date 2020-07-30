@@ -30,7 +30,8 @@ import com.quxianggif.R
  * @author guolin
  * @since 2018/5/14
  */
-class GifSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class GifSettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         addPreferencesFromResource(R.xml.gif_preferences)
@@ -42,7 +43,7 @@ class GifSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnShar
         if (activity != null) {
             activity.title = getString(R.string.title_gif_play_control)
             val currentGifPlaySpeed = PreferenceManager.getDefaultSharedPreferences(activity)
-                    .getString(getString(R.string.key_gif_play_speed), "3") ?: "3"
+                .getString(getString(R.string.key_gif_play_speed), "3") ?: "3"
 
             val gifPlaySpeed = findPreference(getString(R.string.key_gif_play_speed))
             gifPlaySpeed.summary = getGifPlaySpeedForDisplay(currentGifPlaySpeed)

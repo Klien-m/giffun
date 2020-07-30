@@ -55,7 +55,12 @@ import java.util.*
  * @author davy, guolin
  * @since 17/7/17
  */
-class CommentsAdapter(private val activity: CommentsActivity, private val comments: MutableList<Comment>, private val layoutManager: RecyclerView.LayoutManager?, private val mFeedId: Long) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class CommentsAdapter(
+    private val activity: CommentsActivity,
+    private val comments: MutableList<Comment>,
+    private val layoutManager: RecyclerView.LayoutManager?,
+    private val mFeedId: Long
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**
      * 获取RecyclerView数据源中元素的数量。
@@ -83,7 +88,14 @@ class CommentsAdapter(private val activity: CommentsActivity, private val commen
         holder.avatar.setOnClickListener {
             val position = holder.adapterPosition
             val comment = comments[position]
-            UserHomePageActivity.actionStart(activity, holder.avatar, comment.userId, comment.nickname, comment.avatar, comment.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                comment.userId,
+                comment.nickname,
+                comment.avatar,
+                comment.bgImage
+            )
         }
         holder.goodImage.setOnClickListener {
             val position = holder.adapterPosition
@@ -113,19 +125,22 @@ class CommentsAdapter(private val activity: CommentsActivity, private val commen
             val commentPosition = holder.adapterPosition
             val comment = comments[commentPosition]
             val expandMenuItems = getExpandMenuItems(comment)
-            val pair = PopupUtil.showCommentExpandMenu(activity,
-                    expandMenuItems, holder.moreButton)
+            val pair = PopupUtil.showCommentExpandMenu(
+                activity,
+                expandMenuItems, holder.moreButton
+            )
             val window = pair.first
             val expandMenuList = pair.second
-            expandMenuList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-                window.dismiss()
-                val action = expandMenuItems[position]
-                if (GlobalUtil.getString(R.string.report) == action) {
-                    ReportActivity.actionReportComment(activity, comment.commentId)
-                } else if (GlobalUtil.getString(R.string.delete) == action) {
-                    doDeleteAction(commentPosition, comment.commentId)
+            expandMenuList.onItemClickListener =
+                AdapterView.OnItemClickListener { _, _, position, _ ->
+                    window.dismiss()
+                    val action = expandMenuItems[position]
+                    if (GlobalUtil.getString(R.string.report) == action) {
+                        ReportActivity.actionReportComment(activity, comment.commentId)
+                    } else if (GlobalUtil.getString(R.string.delete) == action) {
+                        doDeleteAction(commentPosition, comment.commentId)
+                    }
                 }
-            }
         }
         return holder
     }
@@ -150,12 +165,12 @@ class CommentsAdapter(private val activity: CommentsActivity, private val commen
         val comment = comments[position]
         val avatar = comment.avatar
         Glide.with(activity)
-                .load(CustomUrl(avatar))
-                .bitmapTransform(CropCircleTransformation(activity))
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.avatar)
+            .load(CustomUrl(avatar))
+            .bitmapTransform(CropCircleTransformation(activity))
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(holder.avatar)
         holder.nickname.text = comment.nickname
         holder.content.text = comment.content
         holder.postDate.text = DateUtil.getConvertedDate(comment.postDate)
@@ -237,7 +252,13 @@ class CommentsAdapter(private val activity: CommentsActivity, private val commen
                         EventBus.getDefault().post(deleteCommentEvent)
                     } else {
                         showToast(GlobalUtil.getString(R.string.delete_failed))
-                        logWarn(TAG, "Delete comment failed. " + GlobalUtil.getResponseClue(response.status, response.msg))
+                        logWarn(
+                            TAG,
+                            "Delete comment failed. " + GlobalUtil.getResponseClue(
+                                response.status,
+                                response.msg
+                            )
+                        )
                     }
                 }
 

@@ -168,7 +168,12 @@ class SearchActivity : BaseActivity(), LoadDataListener {
         adapter = SearchAdapter(this@SearchActivity, searchItemList, maxImageWidth)
         searchResults.layoutManager = layoutManager
         searchResults.adapter = adapter
-        searchResults.addItemDecoration(SearchItemDividerDecoration(this@SearchActivity, dp2px(65f)))
+        searchResults.addItemDecoration(
+            SearchItemDividerDecoration(
+                this@SearchActivity,
+                dp2px(65f)
+            )
+        )
         (searchResults.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
         searchResults.addOnScrollListener(object : InfiniteScrollListener(layoutManager) {
 
@@ -187,18 +192,27 @@ class SearchActivity : BaseActivity(), LoadDataListener {
     private fun setupTransitions() {
         if (AndroidVersion.hasLollipopMR1()) {
             setEnterSharedElementCallback(object : SharedElementCallback() {
-                override fun onSharedElementStart(sharedElementNames: List<String>, sharedElements: List<View>?, sharedElementSnapshots: List<View>) {
+                override fun onSharedElementStart(
+                    sharedElementNames: List<String>,
+                    sharedElements: List<View>?,
+                    sharedElementSnapshots: List<View>
+                ) {
                     if (sharedElements != null && sharedElements.isNotEmpty()) {
                         val searchIcon = sharedElements[0]
                         if (searchIcon.id != R.id.searchBack) return
                         val centerX = (searchIcon.left + searchIcon.right) / 2
-                        val hideResults = TransitionUtils.findTransition(window.returnTransition as TransitionSet, CircularReveal::class.java, R.id.resultsContainer) as CircularReveal?
+                        val hideResults = TransitionUtils.findTransition(
+                            window.returnTransition as TransitionSet,
+                            CircularReveal::class.java,
+                            R.id.resultsContainer
+                        ) as CircularReveal?
                         hideResults?.setCenter(Point(centerX, 0))
                     }
                 }
             })
 
-            window.enterTransition.addListener(object : TransitionUtils.TransitionListenerAdapter() {
+            window.enterTransition.addListener(object :
+                TransitionUtils.TransitionListenerAdapter() {
                 override fun onTransitionEnd(transition: Transition) {
                     searchView.requestFocus()
                     showKeyboard()
@@ -253,7 +267,13 @@ class SearchActivity : BaseActivity(), LoadDataListener {
                                     loadFailed(GlobalUtil.getString(R.string.search_keyword_to_long))
                                 }
                                 else -> {
-                                    logWarn(TAG, "Search failed. " + GlobalUtil.getResponseClue(status, searchMixed.msg))
+                                    logWarn(
+                                        TAG,
+                                        "Search failed. " + GlobalUtil.getResponseClue(
+                                            status,
+                                            searchMixed.msg
+                                        )
+                                    )
                                     loadFailed(GlobalUtil.getString(R.string.search_failed) + " " + status)
                                 }
                             }
@@ -392,7 +412,8 @@ class SearchActivity : BaseActivity(), LoadDataListener {
 
     private fun showKeyboard() {
         try {
-            val id = searchView.context.resources.getIdentifier("android:id/search_src_text", null, null)
+            val id =
+                searchView.context.resources.getIdentifier("android:id/search_src_text", null, null)
             val editText = searchView.findViewById<EditText>(id)
             showSoftKeyboard(editText)
         } catch (e: Exception) {

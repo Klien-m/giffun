@@ -108,7 +108,7 @@ class CommentsActivity : BaseActivity(), LoadDataListener {
             return
         }
         setupToolbar()
-        (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false
+        (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false // 取消数据改变时的动画
 
         layoutManager = LinearLayoutManager(this)
         recyclerView.layoutManager = layoutManager
@@ -172,7 +172,7 @@ class CommentsActivity : BaseActivity(), LoadDataListener {
         isNoMoreData = false
         isLoading = true
         var lastComment: Long = 0
-        if (!commentList.isEmpty()) {
+        if (commentList.isNotEmpty()) {
             lastComment = commentList[commentList.size - 1].commentId
         }
         LoadComments.getResponse(mFeedId, lastComment, object : Callback {
@@ -265,8 +265,7 @@ class CommentsActivity : BaseActivity(), LoadDataListener {
         isNoMoreData = false
         if (!ResponseHandler.handleResponse(response)) {
             val loadComments = response as LoadComments
-            val status = loadComments.status
-            when (status) {
+            when (val status = loadComments.status) {
                 0 -> {
                     val comments = loadComments.comments
                     recyclerView.stopScroll()

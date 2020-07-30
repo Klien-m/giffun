@@ -74,8 +74,11 @@ class ParallaxImageView(context: Context, attrs: AttributeSet?) : ImageView(cont
                 if (AndroidVersion.hasJellyBeanMR2()) {
                     clipBounds = clipBound
                 }
-                setScrimAlpha(Math.min(
-                        (-offsetin).toFloat() / minimumHeight * maxScrimAlpha, maxScrimAlpha))
+                setScrimAlpha(
+                    Math.min(
+                        (-offsetin).toFloat() / minimumHeight * maxScrimAlpha, maxScrimAlpha
+                    )
+                )
                 postInvalidateOnAnimation()
             }
             isPinned = offsetin == minOffset
@@ -142,16 +145,17 @@ class ParallaxImageView(context: Context, attrs: AttributeSet?) : ImageView(cont
 
         private val STATE_PINNED = intArrayOf(R.attr.state_pinned)
 
-        val OFFSET: Property<ParallaxImageView, Int> = object : AnimUtils.IntProperty<ParallaxImageView>("offset") {
+        val OFFSET: Property<ParallaxImageView, Int> =
+            object : AnimUtils.IntProperty<ParallaxImageView>("offset") {
 
-            override fun setValue(propertyObject: ParallaxImageView, value: Int) {
-                propertyObject.offset = value
-            }
+                override fun setValue(propertyObject: ParallaxImageView, value: Int) {
+                    propertyObject.offset = value
+                }
 
-            override fun get(parallaxImageView: ParallaxImageView): Int {
-                return parallaxImageView.offset
+                override fun get(parallaxImageView: ParallaxImageView): Int {
+                    return parallaxImageView.offset
+                }
             }
-        }
     }
 
 }

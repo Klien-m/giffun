@@ -43,7 +43,11 @@ class ReportUserFragment : BaseFragment() {
 
     var userId = 0L
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_report_user, container, false)
     }
 
@@ -73,7 +77,7 @@ class ReportUserFragment : BaseFragment() {
 
             submit.isEnabled = false
             descriptionEdit.isEnabled = false
-            ReportUser.getResponse(userId, selectedReason, desp, object: Callback {
+            ReportUser.getResponse(userId, selectedReason, desp, object : Callback {
                 override fun onResponse(response: Response) {
                     if (!ResponseHandler.handleResponse(response)) {
                         if (activity == null) {

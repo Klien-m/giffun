@@ -27,11 +27,9 @@ import android.util.Property
 import android.view.View
 import android.view.animation.AnimationUtils
 import android.view.animation.Interpolator
-
 import com.quxianggif.core.GifFun
 import com.quxianggif.core.util.AndroidVersion
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * Utility methods for working with animations.
@@ -44,16 +42,20 @@ object AnimUtils {
 
     fun getFastOutSlowInInterpolator(context: Context): Interpolator? {
         if (fastOutSlowIn == null && AndroidVersion.hasLollipop()) {
-            fastOutSlowIn = AnimationUtils.loadInterpolator(context,
-                    android.R.interpolator.fast_out_slow_in)
+            fastOutSlowIn = AnimationUtils.loadInterpolator(
+                context,
+                android.R.interpolator.fast_out_slow_in
+            )
         }
         return fastOutSlowIn
     }
 
     fun getFastOutLinearInInterpolator(context: Context): Interpolator? {
         if (fastOutLinearIn == null && AndroidVersion.hasLollipop()) {
-            fastOutLinearIn = AnimationUtils.loadInterpolator(context,
-                    android.R.interpolator.fast_out_linear_in)
+            fastOutLinearIn = AnimationUtils.loadInterpolator(
+                context,
+                android.R.interpolator.fast_out_linear_in
+            )
         }
         return fastOutLinearIn
     }
@@ -61,8 +63,10 @@ object AnimUtils {
     @TargetApi(21)
     fun getLinearOutSlowInInterpolator(context: Context): Interpolator? {
         if (linearOutSlowIn == null) {
-            linearOutSlowIn = AnimationUtils.loadInterpolator(context,
-                    android.R.interpolator.linear_out_slow_in)
+            linearOutSlowIn = AnimationUtils.loadInterpolator(
+                context,
+                android.R.interpolator.linear_out_slow_in
+            )
         }
         return linearOutSlowIn
     }
@@ -73,12 +77,14 @@ object AnimUtils {
             v.scaleX = 0f
             v.scaleY = 0f
             v.animate()
-                    .alpha(1f)
-                    .scaleX(1f)
-                    .scaleY(1f)
-                    .setStartDelay(startDelay.toLong())
-                    .setDuration(duration.toLong()).interpolator = AnimationUtils.loadInterpolator(GifFun.getContext(),
-                    android.R.interpolator.overshoot)
+                .alpha(1f)
+                .scaleX(1f)
+                .scaleY(1f)
+                .setStartDelay(startDelay.toLong())
+                .setDuration(duration.toLong()).interpolator = AnimationUtils.loadInterpolator(
+                GifFun.getContext(),
+                android.R.interpolator.overshoot
+            )
         }
     }
 
@@ -246,7 +252,10 @@ object AnimUtils {
         }
     }
 
-    internal class AnimatorListenerWrapper(private val mAnimator: Animator, private val mListener: Animator.AnimatorListener) : Animator.AnimatorListener {
+    internal class AnimatorListenerWrapper(
+        private val mAnimator: Animator,
+        private val mListener: Animator.AnimatorListener
+    ) : Animator.AnimatorListener {
 
         override fun onAnimationStart(animator: Animator) {
             mListener.onAnimationStart(mAnimator)

@@ -27,7 +27,8 @@ import android.support.v7.widget.StaggeredGridLayoutManager
  *
  * Adapted from https://gist.github.com/ssinss/e06f12ef66c51252563e
  */
-abstract class InfiniteScrollListener(private val layoutManager: RecyclerView.LayoutManager) : RecyclerView.OnScrollListener() {
+abstract class InfiniteScrollListener(private val layoutManager: RecyclerView.LayoutManager) :
+    RecyclerView.OnScrollListener() {
 
     override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
         // bail out if scrolling upward or already loading data

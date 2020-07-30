@@ -19,10 +19,8 @@ package com.quxianggif.util
 
 import com.quxianggif.R
 import com.quxianggif.core.util.GlobalUtil
-
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 /**
  * 时间和日期工具类。

@@ -20,14 +20,12 @@ package com.quxianggif.feeds.ui
 import android.Manifest
 import android.animation.ObjectAnimator
 import android.animation.PropertyValuesHolder
-import android.annotation.TargetApi
 import android.app.Activity
 import android.app.ActivityOptions
 import android.content.ContentValues
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.preference.PreferenceManager
@@ -65,7 +63,6 @@ import com.quxianggif.core.model.BaseFeed
 import com.quxianggif.core.model.Comment
 import com.quxianggif.core.util.AndroidVersion
 import com.quxianggif.core.util.GlobalUtil
-import com.quxianggif.core.util.ImageUtil
 import com.quxianggif.core.util.NetworkUtil
 import com.quxianggif.event.*
 import com.quxianggif.feeds.adapter.FeedDetailMoreAdapter
@@ -73,7 +70,10 @@ import com.quxianggif.network.model.*
 import com.quxianggif.report.ReportActivity
 import com.quxianggif.settings.ui.SettingsActivity
 import com.quxianggif.user.ui.UserHomePageActivity
-import com.quxianggif.util.*
+import com.quxianggif.util.AnimUtils
+import com.quxianggif.util.DateUtil
+import com.quxianggif.util.DeviceInfo
+import com.quxianggif.util.ResponseHandler
 import com.quxianggif.util.glide.CustomUrl
 import com.quxianggif.util.glide.GifPlayTarget
 import com.quxianggif.util.glide.GlideUtil
@@ -86,7 +86,6 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.io.File
 import java.io.FileInputStream
 
 /**
@@ -271,37 +270,57 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
                 if (AndroidVersion.hasQ()) {
                     saveGifToSDCard()
                 } else {
-                    handlePermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), object : PermissionListener {
-                        override fun onGranted() {
-                            saveGifToSDCard()
-                        }
-
-                        override fun onDenied(deniedPermissions: List<String>) {
-                            var allNeverAskAgain = true
-                            for (deniedPermission in deniedPermissions) {
-                                if (ActivityCompat.shouldShowRequestPermissionRationale(this@FeedDetailActivity, deniedPermission)) {
-                                    allNeverAskAgain = false
-                                    break
-                                }
+                    handlePermissions(
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        object : PermissionListener {
+                            override fun onGranted() {
+                                saveGifToSDCard()
                             }
-                            // 所有的权限都被勾上不再询问时，跳转到应用设置界面，引导用户手动打开权限
-                            if (allNeverAskAgain) {
-                                val dialog = AlertDialog.Builder(this@FeedDetailActivity, R.style.GifFunAlertDialogStyle)
+
+                            override fun onDenied(deniedPermissions: List<String>) {
+                                var allNeverAskAgain = true
+                                for (deniedPermission in deniedPermissions) {
+                                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                                            this@FeedDetailActivity,
+                                            deniedPermission
+                                        )
+                                    ) {
+                                        allNeverAskAgain = false
+                                        break
+                                    }
+                                }
+                                // 所有的权限都被勾上不再询问时，跳转到应用设置界面，引导用户手动打开权限
+                                if (allNeverAskAgain) {
+                                    val dialog = AlertDialog.Builder(
+                                        this@FeedDetailActivity,
+                                        R.style.GifFunAlertDialogStyle
+                                    )
                                         .setMessage(GlobalUtil.getString(R.string.allow_storage_permission_please))
                                         .setPositiveButton(GlobalUtil.getString(R.string.settings)) { _, _ ->
-                                            val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                            val uri = Uri.fromParts("package", GlobalUtil.appPackage, null)
+                                            val intent =
+                                                Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                            val uri = Uri.fromParts(
+                                                "package",
+                                                GlobalUtil.appPackage,
+                                                null
+                                            )
                                             intent.data = uri
-                                            activity!!.startActivityForResult(intent, SelectGifActivity.REQUEST_PERMISSION_SETTING)
+                                            activity!!.startActivityForResult(
+                                                intent,
+                                                SelectGifActivity.REQUEST_PERMISSION_SETTING
+                                            )
                                         }
-                                        .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
+                                        .setNegativeButton(
+                                            GlobalUtil.getString(R.string.cancel),
+                                            null
+                                        )
                                         .create()
-                                dialog.show()
-                            } else {
-                                showToast(GlobalUtil.getString(R.string.must_agree_permission_to_save))
+                                    dialog.show()
+                                } else {
+                                    showToast(GlobalUtil.getString(R.string.must_agree_permission_to_save))
+                                }
                             }
-                        }
-                    })
+                        })
                 }
                 return true
             }
@@ -325,7 +344,11 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
                 finish()
             }
         } else if (messageEvent is GoodCommentEvent) {
-            adapter.refreshCommentsGood(messageEvent.commentId, messageEvent.type, messageEvent.goodsCount)
+            adapter.refreshCommentsGood(
+                messageEvent.commentId,
+                messageEvent.type,
+                messageEvent.goodsCount
+            )
         } else if (messageEvent is DeleteCommentEvent) {
             adapter.deleteHotComment(messageEvent.commentId)
         } else {
@@ -359,36 +382,53 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             shareFab.setOnClickListener(this)
 
             Glide.with(this)
-                    .load(mFeed.cover)
-                    .priority(Priority.IMMEDIATE)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(object : RequestListener<String, GlideDrawable> {
-                        override fun onException(e: Exception?, model: String, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-                            if (e != null) {
-                                logWarn(TAG, e.message, e)
-                            } else {
-                                logWarn(TAG, "Load cover failed with exception null. url is ${mFeed.cover}")
-                            }
-                            showToast(GlobalUtil.getString(R.string.load_image_failed))
-                            finishSelf()
-                            return true
+                .load(mFeed.cover)
+                .priority(Priority.IMMEDIATE)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(object : RequestListener<String, GlideDrawable> {
+                    override fun onException(
+                        e: Exception?,
+                        model: String,
+                        target: Target<GlideDrawable>,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        if (e != null) {
+                            logWarn(TAG, e.message, e)
+                        } else {
+                            logWarn(
+                                TAG,
+                                "Load cover failed with exception null. url is ${mFeed.cover}"
+                            )
                         }
+                        showToast(GlobalUtil.getString(R.string.load_image_failed))
+                        finishSelf()
+                        return true
+                    }
 
-                        override fun onResourceReady(resource: GlideDrawable, model: String, target: Target<GlideDrawable>, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                            return false
+                    override fun onResourceReady(
+                        resource: GlideDrawable,
+                        model: String,
+                        target: Target<GlideDrawable>,
+                        isFromMemoryCache: Boolean,
+                        isFirstResource: Boolean
+                    ): Boolean {
+                        return false
+                    }
+                })
+                .into(object : SimpleTarget<GlideDrawable>(targetImgWidth, targetImgHeight) {
+                    override fun onResourceReady(
+                        resource: GlideDrawable,
+                        glideAnimation: GlideAnimation<in GlideDrawable>
+                    ) {
+                        feedGif.setImageDrawable(resource)
+                        if (AndroidVersion.hasLollipop()) {
+                            startPostponedEnterTransition()
+                            window.statusBarColor =
+                                ContextCompat.getColor(this@FeedDetailActivity, R.color.black)
                         }
-                    })
-                    .into(object : SimpleTarget<GlideDrawable>(targetImgWidth, targetImgHeight) {
-                        override fun onResourceReady(resource: GlideDrawable,
-                                                     glideAnimation: GlideAnimation<in GlideDrawable>) {
-                            feedGif.setImageDrawable(resource)
-                            if (AndroidVersion.hasLollipop()) {
-                                startPostponedEnterTransition()
-                                window.statusBarColor = ContextCompat.getColor(this@FeedDetailActivity, R.color.black)
-                            }
-                            fetchGifUrl()
-                        }
-                    })
+                        fetchGifUrl()
+                    }
+                })
 
             if (AndroidVersion.hasLollipop()) {
                 window.enterTransition.addListener(object : SimpleTransitionListener() {
@@ -401,7 +441,8 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             } else {
                 fetchFeedDetails()
             }
-            shareFab.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            shareFab.viewTreeObserver.addOnGlobalLayoutListener(object :
+                ViewTreeObserver.OnGlobalLayoutListener {
                 override fun onGlobalLayout() {
                     shareFab.viewTreeObserver.removeOnGlobalLayoutListener(this)
                     calculateFabPosition()
@@ -456,16 +497,21 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         shareFab.scaleX = 0f
         shareFab.scaleY = 0f
         val animator = ObjectAnimator.ofPropertyValuesHolder(
-                shareFab,
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f))
+            shareFab,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f)
+        )
         animator.startDelay = 300
         animator.start()
     }
 
     private fun setupDetailView() {
-        detailInfo = layoutInflater.inflate(R.layout.feed_detail_info, detailRecyclerView, false) as ViewGroup
+        detailInfo = layoutInflater.inflate(
+            R.layout.feed_detail_info,
+            detailRecyclerView,
+            false
+        ) as ViewGroup
 
         val spacingView = detailInfo.findViewById<View>(R.id.spacingView)
         val favoriteLayout = detailInfo.findViewById<LinearLayout>(R.id.favoriteLayout)
@@ -493,16 +539,25 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             }
 
             Glide.with(this)
-                    .load(CustomUrl(mFeed.avatar))
-                    .placeholder(R.drawable.loading_bg_circle)
-                    .error(R.drawable.avatar_default)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .bitmapTransform(CropCircleTransformation(this))
-                    .into(avatar)
+                .load(CustomUrl(mFeed.avatar))
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .bitmapTransform(CropCircleTransformation(this))
+                .into(avatar)
             nickname.text = mFeed.nickname
             postDate.text = DateUtil.getConvertedDate(mFeed.postDate)
 
-            val onUserClick = View.OnClickListener { UserHomePageActivity.actionStart(this@FeedDetailActivity, avatar, mFeed.userId, mFeed.nickname, mFeed.avatar, mFeed.bgImage) }
+            val onUserClick = View.OnClickListener {
+                UserHomePageActivity.actionStart(
+                    this@FeedDetailActivity,
+                    avatar,
+                    mFeed.userId,
+                    mFeed.nickname,
+                    mFeed.avatar,
+                    mFeed.bgImage
+                )
+            }
             userLayout.setOnClickListener(onUserClick)
             postDate.setOnClickListener(onUserClick)
             avatar.setOnClickListener(onUserClick)
@@ -520,7 +575,10 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             }
         }
         likes.isClickable = false
-        likesText.text = String.format(getString(R.string.number_likes), GlobalUtil.getConvertedNumber(mFeed.likesCount))
+        likesText.text = String.format(
+            getString(R.string.number_likes),
+            GlobalUtil.getConvertedNumber(mFeed.likesCount)
+        )
         feedContent.text = mFeed.content
 
         commentLayout.setOnClickListener {
@@ -646,7 +704,10 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         event.likesCount = likesCount
         EventBus.getDefault().post(event)
         mFeed.likesCount = likesCount
-        likesText.text = String.format(getString(R.string.number_likes), GlobalUtil.getConvertedNumber(likesCount))
+        likesText.text = String.format(
+            getString(R.string.number_likes),
+            GlobalUtil.getConvertedNumber(likesCount)
+        )
         LikeFeed.getResponse(mFeed.feedId, null)
     }
 
@@ -664,7 +725,10 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         if (likesCount != mFeed.likesCount) {
             feedChanged = true
             mFeed.likesCount = likesCount
-            likesText.text = String.format(getString(R.string.number_likes), GlobalUtil.getConvertedNumber(likesCount))
+            likesText.text = String.format(
+                getString(R.string.number_likes),
+                GlobalUtil.getConvertedNumber(likesCount)
+            )
         }
         if (isLiked != mFeed.isLikedAlready) {
             feedChanged = true
@@ -716,7 +780,13 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
                     } else {
                         adapter.setHotComments(null)
                         showToast(GlobalUtil.getString(R.string.fetch_feed_details_failed) + ": " + status)
-                        logWarn(TAG, "fetch feed details failed. " + GlobalUtil.getResponseClue(status, response.msg))
+                        logWarn(
+                            TAG,
+                            "fetch feed details failed. " + GlobalUtil.getResponseClue(
+                                status,
+                                response.msg
+                            )
+                        )
                     }
                 } else {
                     adapter.setHotComments(null)
@@ -742,25 +812,32 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             val network = NetworkUtil.checkNetwork()
             if (network == NetworkUtil.MOBILE) {
                 val prefs = PreferenceManager.getDefaultSharedPreferences(this@FeedDetailActivity)
-                val alertForBigGif = prefs.getBoolean(getString(R.string.key_alert_for_big_gif), true)
-                logDebug(TAG, "alert for big gif " + alertForBigGif + " , gif size is " + mFeed.fsize)
+                val alertForBigGif =
+                    prefs.getBoolean(getString(R.string.key_alert_for_big_gif), true)
+                logDebug(
+                    TAG,
+                    "alert for big gif " + alertForBigGif + " , gif size is " + mFeed.fsize
+                )
                 val isBigGif = mFeed.fsize > 4 * 1024 * 1024 /* 大于4M的GIF图片被视为大图 */
                 if (alertForBigGif && isBigGif) {
-                    val dialogView = LayoutInflater.from(this@FeedDetailActivity).inflate(R.layout.dialog_alert_for_big_gif, null)
+                    val dialogView = LayoutInflater.from(this@FeedDetailActivity)
+                        .inflate(R.layout.dialog_alert_for_big_gif, null)
                     val checkBox = dialogView.findViewById<CheckBox>(R.id.checkbox)
                     val dialog = AlertDialog.Builder(this, R.style.GifFunAlertDialogStyle)
-                            .setTitle(GlobalUtil.getString(R.string.remind))
-                            .setMessage(GlobalUtil.getString(R.string.you_are_playing_big_gif_with_roaming))
-                            .setView(dialogView)
-                            .setPositiveButton(GlobalUtil.getString(R.string.forward)) { _, _ ->
-                                if (isForwardAndDoNotAlertAgainChecked) {
-                                    prefs.edit().putBoolean(getString(R.string.key_alert_for_big_gif), false).apply()
-                                }
-                                sendFetchGifUrlRequest(url)
+                        .setTitle(GlobalUtil.getString(R.string.remind))
+                        .setMessage(GlobalUtil.getString(R.string.you_are_playing_big_gif_with_roaming))
+                        .setView(dialogView)
+                        .setPositiveButton(GlobalUtil.getString(R.string.forward)) { _, _ ->
+                            if (isForwardAndDoNotAlertAgainChecked) {
+                                prefs.edit()
+                                    .putBoolean(getString(R.string.key_alert_for_big_gif), false)
+                                    .apply()
                             }
-                            .setNegativeButton(GlobalUtil.getString(R.string.cancel)) { _, _ -> finishSelf() }
-                            .setOnCancelListener { finishSelf() }
-                            .create()
+                            sendFetchGifUrlRequest(url)
+                        }
+                        .setNegativeButton(GlobalUtil.getString(R.string.cancel)) { _, _ -> finishSelf() }
+                        .setOnCancelListener { finishSelf() }
+                        .create()
                     dialog.setCanceledOnTouchOutside(false)
                     dialog.show()
                     checkBox.setOnCheckedChangeListener { _, isChecked ->
@@ -792,7 +869,10 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
                         loadGif(gifUrl)
                     } else {
                         gifFrontLayout.visibility = View.INVISIBLE
-                        logWarn(TAG, "Load gif failed. " + GlobalUtil.getResponseClue(status, response.msg))
+                        logWarn(
+                            TAG,
+                            "Load gif failed. " + GlobalUtil.getResponseClue(status, response.msg)
+                        )
                         showToast(GlobalUtil.getString(R.string.load_gif_failed))
                     }
                 } else {
@@ -819,10 +899,11 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         gifProgressView.scaleX = 0f
         gifProgressView.scaleY = 0f
         val animator = ObjectAnimator.ofPropertyValuesHolder(
-                gifProgressView,
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f))
+            gifProgressView,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f)
+        )
         animator.startDelay = 200
         animator.start()
     }
@@ -830,7 +911,7 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
     private fun loadGif(gifUrl: String) {
         mGifUrl = gifUrl
         val loopForever = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(getString(R.string.key_loop_gif_play), true)
+            .getBoolean(getString(R.string.key_loop_gif_play), true)
         gifPlayTarget = GifPlayTarget(feedGif, loopForever)
         gifPlayTarget.setGifPlaySpeed(gifPlaySpeed)
         gifPlayTarget.setProgressListener(gifUrl, object : ProgressListener {
@@ -840,34 +921,38 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         })
 
         Glide.with(this)
-                .load(CustomUrl(gifUrl))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .placeholder(feedGif.drawable)
-                .priority(Priority.IMMEDIATE)
-                .dontAnimate()
-                .listener(object : RequestListener<CustomUrl, GlideDrawable> {
-                    override fun onException(e: Exception?, model: CustomUrl, target: Target<GlideDrawable>,
-                                             isFirstResource: Boolean): Boolean {
-                        logWarn(TAG, "Glide load gif failed: $gifUrl")
-                        if (e != null) {
-                            logWarn(TAG, e.message, e)
-                        } else {
-                            logWarn(TAG, "Load gif failed with exception null. url is $gifUrl")
-                        }
-                        gifLoadStatus = GIF_LOAD_FAILED
-                        gifFrontLayout.visibility = View.INVISIBLE
-                        showToast(GlobalUtil.getString(R.string.load_gif_failed))
-                        return true
+            .load(CustomUrl(gifUrl))
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .placeholder(feedGif.drawable)
+            .priority(Priority.IMMEDIATE)
+            .dontAnimate()
+            .listener(object : RequestListener<CustomUrl, GlideDrawable> {
+                override fun onException(
+                    e: Exception?, model: CustomUrl, target: Target<GlideDrawable>,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    logWarn(TAG, "Glide load gif failed: $gifUrl")
+                    if (e != null) {
+                        logWarn(TAG, e.message, e)
+                    } else {
+                        logWarn(TAG, "Load gif failed with exception null. url is $gifUrl")
                     }
+                    gifLoadStatus = GIF_LOAD_FAILED
+                    gifFrontLayout.visibility = View.INVISIBLE
+                    showToast(GlobalUtil.getString(R.string.load_gif_failed))
+                    return true
+                }
 
-                    override fun onResourceReady(resource: GlideDrawable, model: CustomUrl, target: Target<GlideDrawable>,
-                                                 isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                        gifLoadStatus = GIF_LOAD_SUCCESS
-                        gifFrontLayout.visibility = View.INVISIBLE
-                        return false
-                    }
-                })
-                .into<GifPlayTarget>(gifPlayTarget)
+                override fun onResourceReady(
+                    resource: GlideDrawable, model: CustomUrl, target: Target<GlideDrawable>,
+                    isFromMemoryCache: Boolean, isFirstResource: Boolean
+                ): Boolean {
+                    gifLoadStatus = GIF_LOAD_SUCCESS
+                    gifFrontLayout.visibility = View.INVISIBLE
+                    return false
+                }
+            })
+            .into<GifPlayTarget>(gifPlayTarget)
     }
 
     private fun finishSelf() {
@@ -905,7 +990,10 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         if (AndroidVersion.hasQ()) {
             values.put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_DCIM)
         } else {
-            values.put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/${Environment.DIRECTORY_DCIM}/$name")
+            values.put(
+                MediaStore.MediaColumns.DATA,
+                "${Environment.getExternalStorageDirectory().path}/${Environment.DIRECTORY_DCIM}/$name"
+            )
         }
         val uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values)
         if (uri == null) {
@@ -925,13 +1013,16 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
         val buffer = ByteArray(1024)
         var bytes = bis.read(buffer)
         while (bytes >= 0) {
-            bos.write(buffer, 0 , bytes)
+            bos.write(buffer, 0, bytes)
             bos.flush()
             bytes = bis.read(buffer)
         }
         bos.close()
         bis.close()
-        showToastOnUiThread(GlobalUtil.getString(R.string.save_gif_to_album_success), Toast.LENGTH_LONG)
+        showToastOnUiThread(
+            GlobalUtil.getString(R.string.save_gif_to_album_success),
+            Toast.LENGTH_LONG
+        )
     }
 
     /**
@@ -948,10 +1039,10 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             builder.setNegativeButton(GlobalUtil.getString(R.string.ignore)) { _, _ ->
                 // 用户选择忽略，则需要将设置改回初始值
                 PreferenceManager.getDefaultSharedPreferences(this@FeedDetailActivity)
-                        .edit()
-                        .putBoolean(getString(R.string.key_loop_gif_play), loopForeverInit)
-                        .putString(getString(R.string.key_gif_play_speed), gifPlaySpeedInit)
-                        .apply()
+                    .edit()
+                    .putBoolean(getString(R.string.key_loop_gif_play), loopForeverInit)
+                    .putString(getString(R.string.key_gif_play_speed), gifPlaySpeedInit)
+                    .apply()
                 finishSelf()
             }
             builder.create().show()
@@ -979,10 +1070,15 @@ class FeedDetailActivity : BaseActivity(), View.OnClickListener {
             intent.putExtra(FEED, feed)
 
             if (AndroidVersion.hasLollipop()) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(activity,
-                        Pair.create(image, GlobalUtil.getString(R.string.transition_feed_detail)),
-                        Pair.create(image, GlobalUtil.getString(R.string.transition_feed_detail_bg)),
-                        Pair.create(image, GlobalUtil.getString(R.string.transition_feed_detail_image_bg)))
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    activity,
+                    Pair.create(image, GlobalUtil.getString(R.string.transition_feed_detail)),
+                    Pair.create(image, GlobalUtil.getString(R.string.transition_feed_detail_bg)),
+                    Pair.create(
+                        image,
+                        GlobalUtil.getString(R.string.transition_feed_detail_image_bg)
+                    )
+                )
 
                 activity.startActivity(intent, options.toBundle())
             } else {

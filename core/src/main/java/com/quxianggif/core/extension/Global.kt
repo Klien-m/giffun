@@ -21,7 +21,6 @@ import android.annotation.SuppressLint
 import android.os.Looper
 import android.widget.Toast
 import com.quxianggif.core.GifFun
-import com.quxianggif.core.util.GlobalUtil
 
 /**
  * 定义全局的扩展工具方法。

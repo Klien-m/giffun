@@ -145,60 +145,74 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
     /**
      * 监听AppBarLayout的滑动，根据滑动的状态进行相应的界面效果切换。
      */
-    private var titleOffsetChangeListener: AppBarLayout.OnOffsetChangedListener = object : AppBarLayout.OnOffsetChangedListener {
+    private var titleOffsetChangeListener: AppBarLayout.OnOffsetChangedListener =
+        object : AppBarLayout.OnOffsetChangedListener {
 
-        var scrollRange = -1
+            var scrollRange = -1
 
-        override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
-            if (scrollRange == -1) {
-                scrollRange = appBarLayout.totalScrollRange
-            }
-            if (scrollRange + verticalOffset < dp2px(8f)) {
-                collapsingToolbar.title = mNickname
-            } else {
-                collapsingToolbar.title = " "
-            }
-            if (!isUserBgImageLoaded) { // 如果用户背景图还没加载出来，则不执行以下代码。
-                return
-            }
-            if (collapsingToolbar.height + verticalOffset < collapsingToolbar.scrimVisibleHeightTrigger) { // 用户信息和状态栏合并
-                // 先判断背景图是否是深色的，因为深色情况下不用改变状态栏和Toolbar的颜色，保持默认即可。
-                if (!isUserBgImageDark && isToolbarAndStatusbarIconDark) {
-                    setToolbarAndStatusbarIconIntoLight()
-                    isToolbarAndStatusbarIconDark = false
+            override fun onOffsetChanged(appBarLayout: AppBarLayout, verticalOffset: Int) {
+                if (scrollRange == -1) {
+                    scrollRange = appBarLayout.totalScrollRange
                 }
-            } else { // 用户信息和状态栏分离
-                // 先判断背景图是否是深色的，因为深色情况下不用改变状态栏和Toolbar的颜色，保持默认即可。
-                if (!isUserBgImageDark && !isToolbarAndStatusbarIconDark) {
-                    setToolbarAndStatusbarIconIntoDark()
-                    isToolbarAndStatusbarIconDark = true
+                if (scrollRange + verticalOffset < dp2px(8f)) {
+                    collapsingToolbar.title = mNickname
+                } else {
+                    collapsingToolbar.title = " "
+                }
+                if (!isUserBgImageLoaded) { // 如果用户背景图还没加载出来，则不执行以下代码。
+                    return
+                }
+                if (collapsingToolbar.height + verticalOffset < collapsingToolbar.scrimVisibleHeightTrigger) { // 用户信息和状态栏合并
+                    // 先判断背景图是否是深色的，因为深色情况下不用改变状态栏和Toolbar的颜色，保持默认即可。
+                    if (!isUserBgImageDark && isToolbarAndStatusbarIconDark) {
+                        setToolbarAndStatusbarIconIntoLight()
+                        isToolbarAndStatusbarIconDark = false
+                    }
+                } else { // 用户信息和状态栏分离
+                    // 先判断背景图是否是深色的，因为深色情况下不用改变状态栏和Toolbar的颜色，保持默认即可。
+                    if (!isUserBgImageDark && !isToolbarAndStatusbarIconDark) {
+                        setToolbarAndStatusbarIconIntoDark()
+                        isToolbarAndStatusbarIconDark = true
+                    }
                 }
             }
+
         }
 
-    }
+    private var userBgLoadListener: RequestListener<Any, GlideDrawable> =
+        object : RequestListener<Any, GlideDrawable> {
 
-    private var userBgLoadListener: RequestListener<Any, GlideDrawable> = object : RequestListener<Any, GlideDrawable> {
-
-        override fun onException(e: Exception?, model: Any, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-            return false
-        }
-
-        override fun onResourceReady(glideDrawable: GlideDrawable?, model: Any, target: Target<GlideDrawable>,
-                                     isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-            if (glideDrawable == null) {
+            override fun onException(
+                e: Exception?,
+                model: Any,
+                target: Target<GlideDrawable>,
+                isFirstResource: Boolean
+            ): Boolean {
                 return false
             }
-            val bitmap = glideDrawable.toBitmap()
-            val bitmapWidth = bitmap.width
-            val bitmapHeight = bitmap.height
-            if (bitmapWidth <= 0 || bitmapHeight <= 0) {
-                return false
-            }
-            Palette.from(bitmap)
+
+            override fun onResourceReady(
+                glideDrawable: GlideDrawable?, model: Any, target: Target<GlideDrawable>,
+                isFromMemoryCache: Boolean, isFirstResource: Boolean
+            ): Boolean {
+                if (glideDrawable == null) {
+                    return false
+                }
+                val bitmap = glideDrawable.toBitmap()
+                val bitmapWidth = bitmap.width
+                val bitmapHeight = bitmap.height
+                if (bitmapWidth <= 0 || bitmapHeight <= 0) {
+                    return false
+                }
+                Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters()
-                    .setRegion(0, 0, bitmapWidth - 1, (bitmapHeight * 0.1).toInt()) // 测量图片头部的颜色，以确定状态栏和导航栏的颜色
+                    .setRegion(
+                        0,
+                        0,
+                        bitmapWidth - 1,
+                        (bitmapHeight * 0.1).toInt()
+                    ) // 测量图片头部的颜色，以确定状态栏和导航栏的颜色
                     .generate { palette ->
                         isUserBgImageDark = ColorUtils.isBitmapDark(palette, bitmap)
                         if (isUserBgImageDark) {
@@ -211,11 +225,11 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
                         isUserBgImageLoaded = true
                     }
 
-            val left = (bitmapWidth * 0.2).toInt()
-            val right = bitmapWidth - left
-            val top = bitmapHeight / 2
-            val bottom = bitmapHeight - 1
-            Palette.from(bitmap)
+                val left = (bitmapWidth * 0.2).toInt()
+                val right = bitmapWidth - left
+                val top = bitmapHeight / 2
+                val bottom = bitmapHeight - 1
+                Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters()
                     .setRegion(left, top, right, bottom) // 测量图片下半部分的颜色，以确定用户信息的颜色
@@ -233,9 +247,9 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
                         userFollowingsText.setTextColor(color)
                         userFollowersText.setTextColor(color)
                     }
-            return false
+                return false
+            }
         }
-    }
 
     /**
      * 通过获取屏幕宽度来计算出每张图片最大的宽度。
@@ -308,8 +322,20 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
             }
         }
         userFeedsText.setOnClickListener { appBar.setExpanded(false, true) }
-        userFollowingsText.setOnClickListener { FollowshipActivity.actionFollowings(this@UserHomePageActivity, mUserId, mNickname) }
-        userFollowersText.setOnClickListener { FollowshipActivity.actionFollowers(this@UserHomePageActivity, mUserId, mNickname) }
+        userFollowingsText.setOnClickListener {
+            FollowshipActivity.actionFollowings(
+                this@UserHomePageActivity,
+                mUserId,
+                mNickname
+            )
+        }
+        userFollowersText.setOnClickListener {
+            FollowshipActivity.actionFollowers(
+                this@UserHomePageActivity,
+                mUserId,
+                mNickname
+            )
+        }
         fab.setOnClickListener {
             if (isCurrentUserHomePage) {
                 onEditFabClicked()
@@ -318,7 +344,8 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
             }
         }
         appBar.addOnOffsetChangedListener(titleOffsetChangeListener)
-        appBar.viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+        appBar.viewTreeObserver.addOnGlobalLayoutListener(object :
+            ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
                 appBar.viewTreeObserver.removeOnGlobalLayoutListener(this)
                 // 数据没加载出来之前，需要先禁用AppBarLayout的滑动功能。
@@ -336,40 +363,41 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
         userNickname.text = mNickname
         if (!TextUtils.isEmpty(mDescription)) {
             userDescription.visibility = View.VISIBLE
-            userDescription.text = String.format(GlobalUtil.getString(R.string.description_content), mDescription)
+            userDescription.text =
+                String.format(GlobalUtil.getString(R.string.description_content), mDescription)
         } else {
             userDescription.visibility = View.INVISIBLE
         }
         isUserBgImageLoaded = false
         Glide.with(this)
-                .load(CustomUrl(mAvatar))
-                .bitmapTransform(CropCircleTransformation(this))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .into(userAvatar)
+            .load(CustomUrl(mAvatar))
+            .bitmapTransform(CropCircleTransformation(this))
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .into(userAvatar)
         if (TextUtils.isEmpty(mBgImage)) {
             if (!TextUtils.isEmpty(mAvatar)) {
                 Glide.with(this)
-                        .load(CustomUrl(mAvatar))
-                        .bitmapTransform(BlurTransformation(this, 15))
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .listener(userBgLoadListener)
-                        .into(userBgImage)
-            }
-        } else {
-            Glide.with(this)
-                    .load(mBgImage)
+                    .load(CustomUrl(mAvatar))
+                    .bitmapTransform(BlurTransformation(this, 15))
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(userBgLoadListener)
                     .into(userBgImage)
+            }
+        } else {
+            Glide.with(this)
+                .load(mBgImage)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(userBgLoadListener)
+                .into(userBgImage)
         }
 
     }
 
     override fun onPrepareOptionsMenu(menu: Menu?): Boolean {
         if (menu != null && !isCurrentUserHomePage) {
-            val followUserItem =  menu.findItem(R.id.follow_user)
+            val followUserItem = menu.findItem(R.id.follow_user)
             val unfollowUserItem = menu.findItem(R.id.unfollow_user)
             if (isFabFollowed) {
                 followUserItem.isEnabled = false
@@ -415,7 +443,7 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
 
     override fun onLoad() {
         isNoMoreData = false
-        isLoadFailed =false
+        isLoadFailed = false
         loadUserFeeds()
     }
 
@@ -460,13 +488,13 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
         } else if (messageEvent is LoadOriginAvatarEvent) {
             // 用户浏览了头像大图，此时可以将个人主页的头像更新为清晰版。
             Glide.with(this)
-                    .load(CustomUrl(mAvatar))
-                    .skipMemoryCache(true)
-                    .bitmapTransform(CropCircleTransformation(this))
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .placeholder(R.drawable.loading_bg_circle)
-                    .error(R.drawable.avatar_default)
-                    .into(userAvatar)
+                .load(CustomUrl(mAvatar))
+                .skipMemoryCache(true)
+                .bitmapTransform(CropCircleTransformation(this))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .into(userAvatar)
         } else {
             super.onMessageEvent(messageEvent)
         }
@@ -480,7 +508,8 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
             val content = userFeedsText.text.toString()
             val numbers = content.getNumbersFromString()
             var feedCount = Integer.parseInt(numbers)
-            userFeedsText.text = String.format(GlobalUtil.getString(R.string.user_feeds_count), --feedCount)
+            userFeedsText.text =
+                String.format(GlobalUtil.getString(R.string.user_feeds_count), --feedCount)
         } catch (e: Exception) {
             logWarn(TAG, e.message, e)
         }
@@ -581,7 +610,13 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
                     loadFinished()
                 }
                 else -> {
-                    logWarn(TAG, "Load user feeds failed. " + GlobalUtil.getResponseClue(status, fetchUserFeeds.msg))
+                    logWarn(
+                        TAG,
+                        "Load user feeds failed. " + GlobalUtil.getResponseClue(
+                            status,
+                            fetchUserFeeds.msg
+                        )
+                    )
                     loadFailed(GlobalUtil.getString(R.string.fetch_data_failed) + ": " + response.status)
                 }
             }
@@ -627,7 +662,9 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
                     progressBarLayout.visibility = View.VISIBLE
                     loadUserFeeds()
                 }
-                showBadNetworkView(View.OnClickListener { GifFun.getHandler().postDelayed(refresh, 400) })
+                showBadNetworkView(View.OnClickListener {
+                    GifFun.getHandler().postDelayed(refresh, 400)
+                })
             } else {
                 showLoadErrorView(msg)
             }
@@ -640,12 +677,18 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
      * 将获取到的用户信息显示到界面上。
      */
     private fun showUserInformation(fetchUserFeeds: FetchUserFeeds) {
-        userFeedsText.text = String.format(GlobalUtil.getString(R.string.user_feeds_count),
-                GlobalUtil.getConvertedNumber(fetchUserFeeds.feedsCount))
-        userFollowingsText.text = String.format(GlobalUtil.getString(R.string.user_followings_count),
-                GlobalUtil.getConvertedNumber(fetchUserFeeds.followingsCount))
-        userFollowersText.text = String.format(GlobalUtil.getString(R.string.user_followers_count),
-                GlobalUtil.getConvertedNumber(fetchUserFeeds.followersCount))
+        userFeedsText.text = String.format(
+            GlobalUtil.getString(R.string.user_feeds_count),
+            GlobalUtil.getConvertedNumber(fetchUserFeeds.feedsCount)
+        )
+        userFollowingsText.text = String.format(
+            GlobalUtil.getString(R.string.user_followings_count),
+            GlobalUtil.getConvertedNumber(fetchUserFeeds.followingsCount)
+        )
+        userFollowersText.text = String.format(
+            GlobalUtil.getString(R.string.user_followers_count),
+            GlobalUtil.getConvertedNumber(fetchUserFeeds.followersCount)
+        )
         userCountsLayout.visibility = View.VISIBLE
         isFollowed = fetchUserFeeds.isFollowing
         mNickname = fetchUserFeeds.nickname
@@ -662,7 +705,8 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
     private fun popFab() {
         if (GifFun.getUserId() == mUserId) {
             fab.setImageResource(R.drawable.ic_edit)
-            fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent))
+            fab.backgroundTintList =
+                ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent))
         } else {
             if (isFollowed) {
                 setFabFollowed()
@@ -675,10 +719,11 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
         fab.scaleX = 0f
         fab.scaleY = 0f
         val animator = ObjectAnimator.ofPropertyValuesHolder(
-                fab,
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f))
+            fab,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f)
+        )
         animator.startDelay = 200
         animator.start()
     }
@@ -761,7 +806,8 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
      */
     private fun setFabFollowed() {
         fab.setImageResource(R.drawable.ic_followed)
-        fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary))
+        fab.backgroundTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorPrimary))
         isFabFollowed = true
         val event = FollowUserEvent()
         event.userId = mUserId
@@ -774,7 +820,8 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
      */
     private fun setFabUnFollowed() {
         fab.setImageResource(R.drawable.ic_follow)
-        fab.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent))
+        fab.backgroundTintList =
+            ColorStateList.valueOf(ContextCompat.getColor(this, R.color.colorAccent))
         isFabFollowed = false
         val event = FollowUserEvent()
         event.userId = mUserId
@@ -790,9 +837,13 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
     private fun setFollowersCountChange(changeCount: Int) {
         try {
             val followerInfo = userFollowersText.text.toString()
-            val followerCount = Integer.parseInt(followerInfo.split(" ".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1])
-            userFollowersText.text = String.format(GlobalUtil.getString(R.string.user_followers_count),
-                    followerCount + changeCount)
+            val followerCount =
+                Integer.parseInt(followerInfo.split(" ".toRegex()).dropLastWhile { it.isEmpty() }
+                    .toTypedArray()[1])
+            userFollowersText.text = String.format(
+                GlobalUtil.getString(R.string.user_followers_count),
+                followerCount + changeCount
+            )
         } catch (e: Exception) {
             logError(TAG, e.message, e)
         }
@@ -826,7 +877,14 @@ class UserHomePageActivity : BaseActivity(), LoadDataListener {
 
         const val BG_IMAGE = "bg_image"
 
-        fun actionStart(activity: Activity, image: View?, userId: Long, nickname: String, avatar: String, bgImage: String) {
+        fun actionStart(
+            activity: Activity,
+            image: View?,
+            userId: Long,
+            nickname: String,
+            avatar: String,
+            bgImage: String
+        ) {
             val intent = Intent(activity, UserHomePageActivity::class.java)
             intent.putExtra(USER_ID, userId)
             intent.putExtra(NICKNAME, nickname)

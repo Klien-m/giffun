@@ -77,13 +77,16 @@ class FollowshipActivity : BaseActivity() {
         tabs.dividerColor = Color.TRANSPARENT
         // 设置Tab底部线的高度
         tabs.underlineHeight = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 1f, dm).toInt()
+            TypedValue.COMPLEX_UNIT_DIP, 1f, dm
+        ).toInt()
         // 设置Tab Indicator的高度
         tabs.indicatorHeight = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP, 4f, dm).toInt()
+            TypedValue.COMPLEX_UNIT_DIP, 4f, dm
+        ).toInt()
         // 设置Tab标题文字的大小
         tabs.textSize = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_SP, 16f, dm).toInt()
+            TypedValue.COMPLEX_UNIT_SP, 16f, dm
+        ).toInt()
         // 设置Tab Indicator的颜色
         tabs.indicatorColor = ContextCompat.getColor(this, R.color.colorAccent)
         // 设置选中Tab文字的颜色

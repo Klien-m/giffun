@@ -56,10 +56,10 @@ class SettingsActivity : BaseActivity() {
         }
         if (settingsFragment != null) {
             supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.settingsFragmentLayout, settingsFragment)
-                    .addToBackStack(null)
-                    .commit()
+                .beginTransaction()
+                .replace(R.id.settingsFragmentLayout, settingsFragment)
+                .addToBackStack(null)
+                .commit()
         }
     }
 

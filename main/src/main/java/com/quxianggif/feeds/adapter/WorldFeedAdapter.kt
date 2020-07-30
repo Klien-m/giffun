@@ -33,8 +33,10 @@ import com.quxianggif.feeds.ui.WorldFeedsFragment
  * @author guolin
  * @since 17/5/27
  */
-class WorldFeedAdapter(private val fragment: WorldFeedsFragment, feedList: List<WorldFeed>, imageWidth: Int,
-                       layoutManager: RecyclerView.LayoutManager) : WaterFallFeedAdapter<WorldFeed>(fragment.activity, feedList, imageWidth, layoutManager) {
+class WorldFeedAdapter(
+    private val fragment: WorldFeedsFragment, feedList: List<WorldFeed>, imageWidth: Int,
+    layoutManager: RecyclerView.LayoutManager
+) : WaterFallFeedAdapter<WorldFeed>(fragment.activity, feedList, imageWidth, layoutManager) {
 
     override var isLoadFailed: Boolean = false
         get() = fragment.isLoadFailed
@@ -58,7 +60,8 @@ class WorldFeedAdapter(private val fragment: WorldFeedsFragment, feedList: List<
         baseBindFeedHolder(viewHolder, position)
     }
 
-    private class WorldFeedViewHolder internal constructor(view: View) : WaterFallFeedAdapter.FeedViewHolder(view)
+    private class WorldFeedViewHolder internal constructor(view: View) :
+        WaterFallFeedAdapter.FeedViewHolder(view)
 
     companion object {
 

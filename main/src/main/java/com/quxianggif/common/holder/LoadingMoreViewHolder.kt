@@ -44,7 +44,10 @@ class LoadingMoreViewHolder private constructor(view: View) : RecyclerView.ViewH
 
     companion object {
 
-        fun createLoadingMoreViewHolder(context: Context, parent: ViewGroup): LoadingMoreViewHolder {
+        fun createLoadingMoreViewHolder(
+            context: Context,
+            parent: ViewGroup
+        ): LoadingMoreViewHolder {
             val view = LayoutInflater.from(context).inflate(R.layout.loading_footer, parent, false)
             return LoadingMoreViewHolder(view)
         }

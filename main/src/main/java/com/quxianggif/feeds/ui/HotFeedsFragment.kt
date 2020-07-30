@@ -72,7 +72,7 @@ class HotFeedsFragment : WaterFallFeedsFragment(), LoadDataListener {
                 if (isRefreshing) {
                     ResponseHandler.handleFailure(e)
                 }
-                activity.runOnUiThread{
+                activity.runOnUiThread {
                     loadFailed(null)
                     isLoadingMore = false
                 }
@@ -203,7 +203,10 @@ class HotFeedsFragment : WaterFallFeedsFragment(), LoadDataListener {
                     loadFinished()
                 }
             } else {
-                logWarn(TAG, "Fetch feeds failed. " + GlobalUtil.getResponseClue(status, fetchHotFeeds.msg))
+                logWarn(
+                    TAG,
+                    "Fetch feeds failed. " + GlobalUtil.getResponseClue(status, fetchHotFeeds.msg)
+                )
                 activity.runOnUiThread {
                     showToast(GlobalUtil.getString(R.string.fetch_data_failed))
                     loadFailed(GlobalUtil.getString(R.string.fetch_data_failed) + ": " + response.status)

@@ -43,7 +43,8 @@ import java.util.*
  * @author guolin
  * @since 2018/6/20
  */
-class DraftAdapter(val activity: Activity, private val draftList: MutableList<Draft>) : RecyclerView.Adapter<DraftAdapter.DraftViewHolder>() {
+class DraftAdapter(val activity: Activity, private val draftList: MutableList<Draft>) :
+    RecyclerView.Adapter<DraftAdapter.DraftViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DraftViewHolder {
         val view = LayoutInflater.from(activity).inflate(R.layout.draft_item, parent, false)
@@ -64,11 +65,11 @@ class DraftAdapter(val activity: Activity, private val draftList: MutableList<Dr
         holder.content.text = draft.content
         holder.time.text = getDraftTime(draft.time.time)
         Glide.with(activity)
-                .load(Uri.parse(draft.gifUri))
-                .asBitmap()
-                .placeholder(R.drawable.loading_bg_rect)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.cover)
+            .load(Uri.parse(draft.gifUri))
+            .asBitmap()
+            .placeholder(R.drawable.loading_bg_rect)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(holder.cover)
     }
 
     override fun getItemCount() = draftList.size
@@ -98,15 +99,30 @@ class DraftAdapter(val activity: Activity, private val draftList: MutableList<Dr
         }
     }
 
-    class DraftViewHolder(view: View) : RecyclerView.ViewHolder(view), View.OnCreateContextMenuListener {
+    class DraftViewHolder(view: View) : RecyclerView.ViewHolder(view),
+        View.OnCreateContextMenuListener {
 
         init {
             view.setOnCreateContextMenuListener(this)
         }
 
-        override fun onCreateContextMenu(menu: ContextMenu, v: View?, menuInfo: ContextMenu.ContextMenuInfo?) {
-            menu.add(0, REMOVE_DRAFT_ITEM, adapterPosition, GlobalUtil.getString(R.string.delete_draft_item))
-            menu.add(0, CLEAN_DRAFT_BOX, adapterPosition, GlobalUtil.getString(R.string.clean_draft_box))
+        override fun onCreateContextMenu(
+            menu: ContextMenu,
+            v: View?,
+            menuInfo: ContextMenu.ContextMenuInfo?
+        ) {
+            menu.add(
+                0,
+                REMOVE_DRAFT_ITEM,
+                adapterPosition,
+                GlobalUtil.getString(R.string.delete_draft_item)
+            )
+            menu.add(
+                0,
+                CLEAN_DRAFT_BOX,
+                adapterPosition,
+                GlobalUtil.getString(R.string.clean_draft_box)
+            )
         }
 
         val rootLayout: LinearLayout = view.findViewById(R.id.rootLayout)

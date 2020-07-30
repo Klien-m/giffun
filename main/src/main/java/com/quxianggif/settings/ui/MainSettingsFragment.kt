@@ -51,7 +51,8 @@ import java.util.*
  * @author guolin
  * @since 2018/5/14
  */
-class MainSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class MainSettingsFragment : PreferenceFragmentCompat(),
+    SharedPreferences.OnSharedPreferenceChangeListener {
 
     lateinit var settingsActivity: SettingsActivity
 
@@ -73,18 +74,25 @@ class MainSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         cleanCache.onPreferenceClickListener = Preference.OnPreferenceClickListener { _ ->
             val cacheSize = GlideUtil.cacheSize
             if (cacheSize > ONE_MEGA_BYTE) {
-                val cacheSizeInMegaBytes = String.format(Locale.ENGLISH, "%.1f", cacheSize.toDouble() / 1024.0 / 1024.0) + "M"
-                val message = String.format(GlobalUtil.getString(R.string.are_your_sure_to_clean_all_caches), cacheSizeInMegaBytes)
+                val cacheSizeInMegaBytes = String.format(
+                    Locale.ENGLISH,
+                    "%.1f",
+                    cacheSize.toDouble() / 1024.0 / 1024.0
+                ) + "M"
+                val message = String.format(
+                    GlobalUtil.getString(R.string.are_your_sure_to_clean_all_caches),
+                    cacheSizeInMegaBytes
+                )
                 val dialog = AlertDialog.Builder(settingsActivity, R.style.GifFunAlertDialogStyle)
-                        .setMessage(message)
-                        .setPositiveButton(GlobalUtil.getString(R.string.ok)) { _, _ ->
-                            val event = CleanCacheEvent()
-                            EventBus.getDefault().post(event)
-                            GlideUtil.clearCache()
-                            showToast(GlobalUtil.getString(R.string.clean_cache_success))
-                        }
-                        .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
-                        .create()
+                    .setMessage(message)
+                    .setPositiveButton(GlobalUtil.getString(R.string.ok)) { _, _ ->
+                        val event = CleanCacheEvent()
+                        EventBus.getDefault().post(event)
+                        GlideUtil.clearCache()
+                        showToast(GlobalUtil.getString(R.string.clean_cache_success))
+                    }
+                    .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
+                    .create()
                 dialog.show()
             } else {
                 showToast(GlobalUtil.getString(R.string.no_cache_to_clean))
@@ -109,7 +117,11 @@ class MainSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
 
         val userTerms = findPreference(getString(R.string.key_user_terms))
         userTerms.setOnPreferenceClickListener {
-            WebViewActivity.actionStart(settingsActivity, getString(R.string.title_user_terms), USER_TERMS_URL)
+            WebViewActivity.actionStart(
+                settingsActivity,
+                getString(R.string.title_user_terms),
+                USER_TERMS_URL
+            )
             true
         }
 
@@ -138,7 +150,10 @@ class MainSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
         if (key == getString(R.string.key_check_update)) {
             val checkUpdate = findPreference(key)
             if (checkUpdate is SwitchPreferenceCompat && !checkUpdate.isChecked) {
-                showToast(GlobalUtil.getString(R.string.check_update_in_about_if_you_need), Toast.LENGTH_LONG)
+                showToast(
+                    GlobalUtil.getString(R.string.check_update_in_about_if_you_need),
+                    Toast.LENGTH_LONG
+                )
             }
         }
     }
@@ -148,17 +163,17 @@ class MainSettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSha
      */
     private fun logout() {
         val dialog = AlertDialog.Builder(settingsActivity, R.style.GifFunAlertDialogStyle)
-                .setMessage(GlobalUtil.getString(R.string.confirm_to_logout))
-                .setPositiveButton(GlobalUtil.getString(R.string.ok)) { _, _ ->
-                    GifFun.logout()
-                    LitePal.deleteAllAsync<WorldFeed>().listen(null)
-                    LitePal.deleteAllAsync<FollowingFeed>().listen(null)
-                    LitePal.deleteAllAsync<RefFeed>().listen(null)
-                    ActivityCollector.finishAll()
-                    LoginActivity.actionStart(settingsActivity, false, null)
-                }
-                .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
-                .create()
+            .setMessage(GlobalUtil.getString(R.string.confirm_to_logout))
+            .setPositiveButton(GlobalUtil.getString(R.string.ok)) { _, _ ->
+                GifFun.logout()
+                LitePal.deleteAllAsync<WorldFeed>().listen(null)
+                LitePal.deleteAllAsync<FollowingFeed>().listen(null)
+                LitePal.deleteAllAsync<RefFeed>().listen(null)
+                ActivityCollector.finishAll()
+                LoginActivity.actionStart(settingsActivity, false, null)
+            }
+            .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
+            .create()
         dialog.show()
     }
 

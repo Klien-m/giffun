@@ -73,7 +73,11 @@ class FileBrowserFragment : BaseFragment(), AdapterView.OnItemClickListener {
 
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_file_browser, container, false)
         //Grab a reference handle on the view, just like you'd do with any other view.
         fileBrowserView = view.findViewById(R.id.fileBrowserView)
@@ -82,13 +86,13 @@ class FileBrowserFragment : BaseFragment(), AdapterView.OnItemClickListener {
         //  getActionBar().setTitle(path.toString());
         //Customize the view.
         fileBrowserView.setFileBrowserLayoutType(FileBrowserView.FILE_BROWSER_LIST_LAYOUT) //Set the type of view to use.
-                .setDefaultDirectory(File(Environment.getExternalStorageDirectory().path)) //Set the default directory to show.
-                .setShowHiddenFiles(true) //Set whether or not you want to show hidden files.
-                .showItemSizes(true) //Shows the sizes of each item in the list.
-                .showOverflowMenus(true) //Shows the overflow menus for each item in the list.
-                .showItemIcons(true) //Shows the icons next to each item name in the list.
-                .setNavigationInterface(navInterface) //Sets the nav interface instance for this view.
-                .init() //Loads the view. You MUST call this method, or the view will not be displayed.
+            .setDefaultDirectory(File(Environment.getExternalStorageDirectory().path)) //Set the default directory to show.
+            .setShowHiddenFiles(true) //Set whether or not you want to show hidden files.
+            .showItemSizes(true) //Shows the sizes of each item in the list.
+            .showOverflowMenus(true) //Shows the overflow menus for each item in the list.
+            .showItemIcons(true) //Shows the icons next to each item name in the list.
+            .setNavigationInterface(navInterface) //Sets the nav interface instance for this view.
+            .init() //Loads the view. You MUST call this method, or the view will not be displayed.
 
         return view
     }
@@ -113,7 +117,8 @@ class FileBrowserFragment : BaseFragment(), AdapterView.OnItemClickListener {
         var sdcardPath = path
         sdcardPath = sdcardPath.replace(activity.rootPath, "sdcard")
         activity.toolbarTitleText.text = sdcardPath
-        GifFun.getHandler().post { activity.toolbarScrollview.fullScroll(HorizontalScrollView.FOCUS_RIGHT) }
+        GifFun.getHandler()
+            .post { activity.toolbarScrollview.fullScroll(HorizontalScrollView.FOCUS_RIGHT) }
     }
 
     companion object {

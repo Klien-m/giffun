@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright 2015 Google Inc.
 
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,13 +14,12 @@
   limitations under the License.
   -->
 
-<transition
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<transition xmlns:android="http://schemas.android.com/apk/res/android"
     class="com.quxianggif.common.transitions.Pop"
-    android:fadingMode="fade_in"
-    android:startDelay="450"
     android:duration="300"
-    android:interpolator="@android:interpolator/linear_out_slow_in">
+    android:fadingMode="fade_in"
+    android:interpolator="@android:interpolator/linear_out_slow_in"
+    android:startDelay="450">
     <targets>
         <target android:targetId="@id/composeFab" />
     </targets>

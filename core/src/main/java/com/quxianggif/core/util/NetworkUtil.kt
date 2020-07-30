@@ -19,6 +19,8 @@ package com.quxianggif.core.util
 
 import android.content.Context
 import android.net.ConnectivityManager
+import android.os.Build
+import android.support.annotation.RequiresApi
 import com.quxianggif.core.GifFun
 
 /**
@@ -29,14 +31,15 @@ import com.quxianggif.core.GifFun
  */
 object NetworkUtil {
 
-    const val NO_NETWORK = 0
+    private const val NO_NETWORK = 0
 
-    const val WIFI = 1
+    private const val WIFI = 1
 
     const val MOBILE = 2
 
     const val UNKNOWN = -1
 
+    @RequiresApi(Build.VERSION_CODES.M)
     fun checkNetwork(): Int {
         val manager = GifFun.getContext().getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val wifi = manager.getNetworkInfo(ConnectivityManager.TYPE_WIFI)

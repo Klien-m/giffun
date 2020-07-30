@@ -52,10 +52,25 @@ class OpenSourceProjectsActivity : BaseActivity() {
         add(OpenSourceProject("EventBus", "https://github.com/greenrobot/EventBus"))
         add(OpenSourceProject("LitePal", "https://github.com/LitePalFramework/LitePal"))
         add(OpenSourceProject("CircleImageView", "https://github.com/hdodenhof/CircleImageView"))
-        add(OpenSourceProject("Android Image Cropper", "https://github.com/ArthurHub/Android-Image-Cropper"))
-        add(OpenSourceProject("Glide Transformations", "https://github.com/wasabeef/glide-transformations"))
+        add(
+            OpenSourceProject(
+                "Android Image Cropper",
+                "https://github.com/ArthurHub/Android-Image-Cropper"
+            )
+        )
+        add(
+            OpenSourceProject(
+                "Glide Transformations",
+                "https://github.com/wasabeef/glide-transformations"
+            )
+        )
         add(OpenSourceProject("PhotoView", "https://github.com/chrisbanes/PhotoView"))
-        add(OpenSourceProject("PagerSlidingTabStrip", "https://github.com/astuetz/PagerSlidingTabStrip"))
+        add(
+            OpenSourceProject(
+                "PagerSlidingTabStrip",
+                "https://github.com/astuetz/PagerSlidingTabStrip"
+            )
+        )
         add(OpenSourceProject("FileBrowserView", "https://github.com/psaravan/FileBrowserView"))
     }
 

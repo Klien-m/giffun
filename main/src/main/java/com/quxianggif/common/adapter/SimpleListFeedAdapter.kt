@@ -87,8 +87,12 @@ import java.util.*
  * @author guolin
  * @since 17/10/15
  */
-abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected open var activity: A, protected val feedList: MutableList<T>, private val maxImageWidth: Int,
-                                                         private val layoutManager: RecyclerView.LayoutManager?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(
+    protected open var activity: A,
+    protected val feedList: MutableList<T>,
+    private val maxImageWidth: Int,
+    private val layoutManager: RecyclerView.LayoutManager?
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val maxImageHeight: Int = dp2px(250f)
 
@@ -145,18 +149,26 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
             val feedPosition = holder.adapterPosition
             val feed = feedList[feedPosition]
             val expandMenuItems = getExpandMenuItems(feed)
-            val pair = PopupUtil.showUserFeedExpandMenu(activity, expandMenuItems, holder.expandButton)
+            val pair =
+                PopupUtil.showUserFeedExpandMenu(activity, expandMenuItems, holder.expandButton)
             val window = pair.first
             val expandMenuList = pair.second
-            expandMenuList.onItemClickListener = AdapterView.OnItemClickListener { _, _, position, _ ->
-                window.dismiss()
-                val action = expandMenuItems[position]
-                when (action) {
-                    GlobalUtil.getString(R.string.share) -> showToast(GlobalUtil.getString(R.string.currently_not_supported))
-                    GlobalUtil.getString(R.string.report) -> ReportActivity.actionReportFeed(activity, feed.feedId)
-                    GlobalUtil.getString(R.string.delete) -> doDeleteAction(feedPosition, feed.feedId)
+            expandMenuList.onItemClickListener =
+                AdapterView.OnItemClickListener { _, _, position, _ ->
+                    window.dismiss()
+                    val action = expandMenuItems[position]
+                    when (action) {
+                        GlobalUtil.getString(R.string.share) -> showToast(GlobalUtil.getString(R.string.currently_not_supported))
+                        GlobalUtil.getString(R.string.report) -> ReportActivity.actionReportFeed(
+                            activity,
+                            feed.feedId
+                        )
+                        GlobalUtil.getString(R.string.delete) -> doDeleteAction(
+                            feedPosition,
+                            feed.feedId
+                        )
+                    }
                 }
-            }
         }
         holder.likesLayout.setOnClickListener {
             val position = holder.adapterPosition
@@ -255,15 +267,24 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
         val spanString = SpannableString(nickname + ": " + refFeed.content)
         spanString.setSpan(object : ClickableSpan() {
             override fun onClick(widget: View) {
-                UserHomePageActivity.actionStart(activity, null, refFeed.userId, refFeed.nickname, refFeed.avatar, refFeed.bgImage)
+                UserHomePageActivity.actionStart(
+                    activity,
+                    null,
+                    refFeed.userId,
+                    refFeed.nickname,
+                    refFeed.avatar,
+                    refFeed.bgImage
+                )
             }
 
             override fun updateDrawState(textPaint: TextPaint) {
                 textPaint.isUnderlineText = false //去除超链接的下划线
             }
         }, 0, nickname.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
-        spanString.setSpan(ForegroundColorSpan(ContextCompat.getColor(activity, R.color.refeed_nickname)),
-                0, nickname.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE)
+        spanString.setSpan(
+            ForegroundColorSpan(ContextCompat.getColor(activity, R.color.refeed_nickname)),
+            0, nickname.length, Spanned.SPAN_INCLUSIVE_EXCLUSIVE
+        )
         return spanString
     }
 
@@ -298,19 +319,19 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
         }
         if (feed.avatar.isBlank()) {
             Glide.with(activity)
-                 .load(R.drawable.avatar_default)
-                 .bitmapTransform(CropCircleTransformation(activity))
-                 .placeholder(R.drawable.loading_bg_circle)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(holder.avatar)
+                .load(R.drawable.avatar_default)
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.avatar)
         } else {
             Glide.with(activity)
-                 .load(CustomUrl(feed.avatar))
-                 .bitmapTransform(CropCircleTransformation(activity))
-                 .placeholder(R.drawable.loading_bg_circle)
-                 .error(R.drawable.avatar_default)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(holder.avatar)
+                .load(CustomUrl(feed.avatar))
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.avatar)
         }
 
         if (layoutManager != null) {
@@ -412,7 +433,13 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
                         EventBus.getDefault().post(deleteFeedEvent)
                     } else {
                         showToast(GlobalUtil.getString(R.string.delete_failed))
-                        logWarn(TAG, "Delete feed failed. " + GlobalUtil.getResponseClue(response.status, response.msg))
+                        logWarn(
+                            TAG,
+                            "Delete feed failed. " + GlobalUtil.getResponseClue(
+                                response.status,
+                                response.msg
+                            )
+                        )
 
                     }
                 }
@@ -433,26 +460,37 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
 
     private fun loadFeedCover(feed: BaseFeed, holder: SimpleListFeedViewHolder) {
         Glide.with(activity)
-                .load(feed.cover)
-                .override(feed.imgWidth, feed.imgHeight)
-                .placeholder(R.drawable.loading_bg_rect)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .priority(Priority.IMMEDIATE)
-                .listener(object : RequestListener<String, GlideDrawable> {
-                    override fun onException(e: java.lang.Exception?, model: String?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-                        feed.coverLoaded = false
-                        feed.coverLoadFailed = true
-                        return false
-                    }
+            .load(feed.cover)
+            .override(feed.imgWidth, feed.imgHeight)
+            .placeholder(R.drawable.loading_bg_rect)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .priority(Priority.IMMEDIATE)
+            .listener(object : RequestListener<String, GlideDrawable> {
+                override fun onException(
+                    e: java.lang.Exception?,
+                    model: String?,
+                    target: Target<GlideDrawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    feed.coverLoaded = false
+                    feed.coverLoadFailed = true
+                    return false
+                }
 
-                    override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                        feed.coverLoaded = true
-                        feed.coverLoadFailed = false
-                        return false
-                    }
+                override fun onResourceReady(
+                    resource: GlideDrawable?,
+                    model: String?,
+                    target: Target<GlideDrawable>?,
+                    isFromMemoryCache: Boolean,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    feed.coverLoaded = true
+                    feed.coverLoadFailed = false
+                    return false
+                }
 
-                })
-                .into(holder.feedCover)
+            })
+            .into(holder.feedCover)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -461,7 +499,7 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
         if (!ViewUtils.viewsIntersect(item, fab)) return
 
         val reenter = TransitionInflater.from(activity)
-                .inflateTransition(R.transition.compose_fab_reenter)
+            .inflateTransition(R.transition.compose_fab_reenter)
         reenter.addListener(object : TransitionUtils.TransitionListenerAdapter() {
             override fun onTransitionEnd(transition: Transition) {
                 activity.window.reenterTransition = null
@@ -486,7 +524,8 @@ abstract class SimpleListFeedAdapter<T : SimpleListFeed, A : Activity>(protected
 
     }
 
-    open class SimpleListFeedViewHolder internal constructor(view: View) : RecyclerView.ViewHolder(view) {
+    open class SimpleListFeedViewHolder internal constructor(view: View) :
+        RecyclerView.ViewHolder(view) {
 
         val cardView: CardView = view as CardView
 

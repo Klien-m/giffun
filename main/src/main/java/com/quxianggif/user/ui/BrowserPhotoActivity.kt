@@ -61,7 +61,10 @@ class BrowserPhotoActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
         setContentView(R.layout.activity_browser_photo)
     }
 
@@ -80,30 +83,33 @@ class BrowserPhotoActivity : BaseActivity() {
             })
         }
         Glide.with(activity)
-                .load(CustomUrl(avatarUrl))
-                .asBitmap()
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .priority(Priority.IMMEDIATE)
-                .error(R.drawable.avatar_default)
-                .into(object : SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
-                        photoView.setImageBitmap(resource)
-                        avatarSize = resource.height
-                        if (AndroidVersion.hasLollipop()) {
-                            startPostponedEnterTransition()
-                        } else {
-                            loadOriginPhoto()
-                        }
+            .load(CustomUrl(avatarUrl))
+            .asBitmap()
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .priority(Priority.IMMEDIATE)
+            .error(R.drawable.avatar_default)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    glideAnimation: GlideAnimation<in Bitmap>
+                ) {
+                    photoView.setImageBitmap(resource)
+                    avatarSize = resource.height
+                    if (AndroidVersion.hasLollipop()) {
+                        startPostponedEnterTransition()
+                    } else {
+                        loadOriginPhoto()
                     }
+                }
 
-                    override fun onLoadFailed(e: Exception, errorDrawable: Drawable) {
-                        if (AndroidVersion.hasLollipop()) {
-                            startPostponedEnterTransition()
-                        }
-                        super.onLoadFailed(e, errorDrawable)
+                override fun onLoadFailed(e: Exception, errorDrawable: Drawable) {
+                    if (AndroidVersion.hasLollipop()) {
+                        startPostponedEnterTransition()
                     }
-                })
+                    super.onLoadFailed(e, errorDrawable)
+                }
+            })
     }
 
     /**
@@ -117,18 +123,21 @@ class BrowserPhotoActivity : BaseActivity() {
         val originUrl = CustomUrl(avatarUrl).cacheKey
         GlideUtil.removeImageCache(originUrl)
         Glide.with(activity)
-                .load(originUrl)
-                .asBitmap()
-                .skipMemoryCache(true)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .error(R.drawable.avatar_default)
-                .into(object : SimpleTarget<Bitmap>() {
-                    override fun onResourceReady(resource: Bitmap, glideAnimation: GlideAnimation<in Bitmap>) {
-                        photoView.setImageBitmap(resource)
-                        val event = LoadOriginAvatarEvent()
-                        EventBus.getDefault().post(event)
-                    }
-                })
+            .load(originUrl)
+            .asBitmap()
+            .skipMemoryCache(true)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .error(R.drawable.avatar_default)
+            .into(object : SimpleTarget<Bitmap>() {
+                override fun onResourceReady(
+                    resource: Bitmap,
+                    glideAnimation: GlideAnimation<in Bitmap>
+                ) {
+                    photoView.setImageBitmap(resource)
+                    val event = LoadOriginAvatarEvent()
+                    EventBus.getDefault().post(event)
+                }
+            })
     }
 
     /**
@@ -162,8 +171,10 @@ class BrowserPhotoActivity : BaseActivity() {
             val intent = Intent(activity, BrowserPhotoActivity::class.java)
             intent.putExtra(URL, url)
             if (AndroidVersion.hasLollipop()) {
-                val options = ActivityOptions.makeSceneTransitionAnimation(activity,
-                        imageView, GlobalUtil.getString(R.string.transition_browse_photo))
+                val options = ActivityOptions.makeSceneTransitionAnimation(
+                    activity,
+                    imageView, GlobalUtil.getString(R.string.transition_browse_photo)
+                )
                 activity.startActivity(intent, options.toBundle())
             } else {
                 activity.startActivity(intent)

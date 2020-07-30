@@ -33,7 +33,6 @@ import com.quxianggif.common.ui.AlbumActivity
 import com.quxianggif.core.GifFun
 import com.quxianggif.core.extension.showToast
 import com.quxianggif.core.util.GlobalUtil
-import com.quxianggif.core.util.ImageUtil
 import com.quxianggif.util.glide.GifAlbumTarget
 import com.quxianggif.util.glide.GlideUtil
 
@@ -107,11 +106,11 @@ class GifAlbumAdapter : AlbumAdapter() {
         val image = mImageList[position]
         // 使用Glide加载GIF图
         Glide.with(mContext)
-                .load(image.uri)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .placeholder(R.drawable.album_loading_bg)
-                .override(mImageSize, mImageSize)
-                .into(GifAlbumTarget(holder.image, false))
+            .load(image.uri)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .placeholder(R.drawable.album_loading_bg)
+            .override(mImageSize, mImageSize)
+            .into(GifAlbumTarget(holder.image, false))
     }
 
     companion object {

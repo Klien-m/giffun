@@ -54,7 +54,6 @@ import com.quxianggif.network.model.ModifyUserInfo
 import com.quxianggif.network.model.Response
 import com.quxianggif.util.*
 import com.quxianggif.util.glide.CustomUrl
-import com.quxianggif.util.glide.GlideUtil
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import jp.wasabeef.glide.transformations.BlurTransformation
@@ -99,7 +98,8 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
 
         override fun afterTextChanged(s: Editable) {
             val length = nicknameEdit.text.toString().trim { it <= ' ' }.length
-            nicknameLimitText.text = String.format(GlobalUtil.getString(R.string.nickname_length_limit), length)
+            nicknameLimitText.text =
+                String.format(GlobalUtil.getString(R.string.nickname_length_limit), length)
             userNickname.text = s.toString().trim { it <= ' ' }
         }
     }
@@ -111,53 +111,79 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
 
         override fun afterTextChanged(s: Editable) {
             val length = descriptionEdit.text.toString().trim { it <= ' ' }.length
-            descriptionLimitText.text = String.format(GlobalUtil.getString(R.string.description_length_limit), length)
+            descriptionLimitText.text =
+                String.format(GlobalUtil.getString(R.string.description_length_limit), length)
             if (TextUtils.isEmpty(s.toString().trim { it <= ' ' })) {
                 userDescription.text = ""
                 userDescription.visibility = View.GONE
             } else {
-                userDescription.text = String.format(GlobalUtil.getString(R.string.description_content), s.toString().trim { it <= ' ' })
+                userDescription.text = String.format(
+                    GlobalUtil.getString(R.string.description_content),
+                    s.toString().trim { it <= ' ' })
                 userDescription.visibility = View.VISIBLE
             }
         }
     }
 
-    private var userBgLoadListener: RequestListener<Any, Bitmap> = object : RequestListener<Any, Bitmap> {
-        override fun onException(e: Exception?, model: Any, target: Target<Bitmap>, isFirstResource: Boolean): Boolean {
-            return false
-        }
+    private var userBgLoadListener: RequestListener<Any, Bitmap> =
+        object : RequestListener<Any, Bitmap> {
+            override fun onException(
+                e: Exception?,
+                model: Any,
+                target: Target<Bitmap>,
+                isFirstResource: Boolean
+            ): Boolean {
+                return false
+            }
 
-        override fun onResourceReady(bitmap: Bitmap?, model: Any, target: Target<Bitmap>,
-                                     isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-            if (bitmap == null) {
-                return false
-            }
-            val bitmapWidth = bitmap.width
-            val bitmapHeight = bitmap.height
-            if (bitmapWidth <= 0 || bitmapHeight <= 0) {
-                return false
-            }
-            Palette.from(bitmap)
+            override fun onResourceReady(
+                bitmap: Bitmap?, model: Any, target: Target<Bitmap>,
+                isFromMemoryCache: Boolean, isFirstResource: Boolean
+            ): Boolean {
+                if (bitmap == null) {
+                    return false
+                }
+                val bitmapWidth = bitmap.width
+                val bitmapHeight = bitmap.height
+                if (bitmapWidth <= 0 || bitmapHeight <= 0) {
+                    return false
+                }
+                Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters()
-                    .setRegion(0, 0, bitmapWidth - 1, (bitmapHeight * 0.1).toInt()) // 测量图片头部的颜色，以确定状态栏和导航栏的颜色
+                    .setRegion(
+                        0,
+                        0,
+                        bitmapWidth - 1,
+                        (bitmapHeight * 0.1).toInt()
+                    ) // 测量图片头部的颜色，以确定状态栏和导航栏的颜色
                     .generate { palette ->
                         val isDark = ColorUtils.isBitmapDark(palette, bitmap)
                         if (isDark) {
-                            save.setTextColor(ContextCompat.getColorStateList(this@ModifyUserInfoActivity, R.color.save_bg_light))
+                            save.setTextColor(
+                                ContextCompat.getColorStateList(
+                                    this@ModifyUserInfoActivity,
+                                    R.color.save_bg_light
+                                )
+                            )
                             setToolbarAndStatusbarIconIntoLight()
                         } else {
-                            save.setTextColor(ContextCompat.getColorStateList(this@ModifyUserInfoActivity, R.color.save_bg_dark))
+                            save.setTextColor(
+                                ContextCompat.getColorStateList(
+                                    this@ModifyUserInfoActivity,
+                                    R.color.save_bg_dark
+                                )
+                            )
                             setToolbarAndStatusbarIconIntoDark()
                         }
                     }
 
-            val left = (bitmapWidth * 0.2).toInt()
-            val right = bitmapWidth - left
-            val top = bitmapHeight / 2
-            val bottom = bitmapHeight - 1
-            logDebug(TAG, "text area top $top , bottom $bottom , left $left , right $right")
-            Palette.from(bitmap)
+                val left = (bitmapWidth * 0.2).toInt()
+                val right = bitmapWidth - left
+                val top = bitmapHeight / 2
+                val bottom = bitmapHeight - 1
+                logDebug(TAG, "text area top $top , bottom $bottom , left $left , right $right")
+                Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters()
                     .setRegion(left, top, right, bottom) // 测量图片下半部分的颜色，以确定用户信息的颜色
@@ -167,14 +193,17 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
                         color = if (isDark) {
                             ContextCompat.getColor(this@ModifyUserInfoActivity, R.color.white_text)
                         } else {
-                            ContextCompat.getColor(this@ModifyUserInfoActivity, R.color.primary_text)
+                            ContextCompat.getColor(
+                                this@ModifyUserInfoActivity,
+                                R.color.primary_text
+                            )
                         }
                         userNickname.setTextColor(color)
                         userDescription.setTextColor(color)
                     }
-            return false
+                return false
+            }
         }
-    }
 
     /**
      * 判断用户是否修改了个人信息。
@@ -210,13 +239,13 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
         // load and setup data
         loadBgImage()
         Glide.with(this)
-                .load(CustomUrl(srcAvatar))
-                .asBitmap()
-                .transform(CropCircleTransformation(this))
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .into(userAvatar)
+            .load(CustomUrl(srcAvatar))
+            .asBitmap()
+            .transform(CropCircleTransformation(this))
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .into(userAvatar)
         userNickname.text = srcNickname
         nicknameEdit.setText(srcNickname)
         if (TextUtils.isEmpty(srcDescription)) {
@@ -224,11 +253,18 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
         } else {
             descriptionEdit.setText(srcDescription)
             userDescription.visibility = View.VISIBLE
-            userDescription.text = String.format(GlobalUtil.getString(R.string.description_content), srcDescription)
+            userDescription.text =
+                String.format(GlobalUtil.getString(R.string.description_content), srcDescription)
         }
 
-        nicknameLimitText.text = String.format(GlobalUtil.getString(R.string.nickname_length_limit), nicknameEdit.text!!.length)
-        descriptionLimitText.text = String.format(GlobalUtil.getString(R.string.description_length_limit), descriptionEdit.text!!.length)
+        nicknameLimitText.text = String.format(
+            GlobalUtil.getString(R.string.nickname_length_limit),
+            nicknameEdit.text!!.length
+        )
+        descriptionLimitText.text = String.format(
+            GlobalUtil.getString(R.string.description_length_limit),
+            descriptionEdit.text!!.length
+        )
 
         // setup events
         save.setOnClickListener(this)
@@ -249,20 +285,20 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
         if (TextUtils.isEmpty(srcBgImage)) {
             if (!TextUtils.isEmpty(srcAvatar)) {
                 Glide.with(this)
-                        .load(CustomUrl(srcAvatar))
-                        .asBitmap()
-                        .transform(BlurTransformation(this, 15))
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .listener(userBgLoadListener)
-                        .into(userBgImage)
-            }
-        } else {
-            Glide.with(this)
-                    .load(srcBgImage)
+                    .load(CustomUrl(srcAvatar))
                     .asBitmap()
+                    .transform(BlurTransformation(this, 15))
                     .diskCacheStrategy(DiskCacheStrategy.SOURCE)
                     .listener(userBgLoadListener)
                     .into(userBgImage)
+            }
+        } else {
+            Glide.with(this)
+                .load(srcBgImage)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(userBgLoadListener)
+                .into(userBgImage)
         }
     }
 
@@ -354,64 +390,79 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
         }
         if (isUserInfoChanged) {
             showProgressDialog(null, GlobalUtil.getString(R.string.hold_on_for_saving))
-            val nickname = if (nicknameEdit.text.toString().trim() == srcNickname) "" else nicknameEdit.text.toString().trim()
-            val description = if (descriptionEdit.text.toString().trim() == srcDescription) "" else descriptionEdit.text.toString().trim()
-            ModifyUserInfo.getResponse(nickname, description, userAvatarUri, userBgImageUri, object : Callback {
-                override fun onResponse(response: Response) {
-                    if (activity == null) {
-                        return
-                    }
-                    if (!ResponseHandler.handleResponse(response)) {
-                        closeProgressDialog()
-                        val modifyUserInfo = response as ModifyUserInfo
-                        val status = modifyUserInfo.status
-                        when (status) {
-                            0 -> {
-                                val event = ModifyUserInfoEvent()
-                                if (srcNickname != modifyUserInfo.nickname) {
-                                    UserUtil.saveNickname(modifyUserInfo.nickname)
-                                    event.modifyNickname = true
-                                }
-                                if (srcDescription != modifyUserInfo.description) {
-                                    UserUtil.saveDescription(modifyUserInfo.description)
-                                    event.modifyDescription = true
-                                }
-                                if (srcAvatar != modifyUserInfo.avatar) {
-                                    UserUtil.saveAvatar(modifyUserInfo.avatar)
-                                    event.modifyAvatar = true
+            val nickname = if (nicknameEdit.text.toString()
+                    .trim() == srcNickname
+            ) "" else nicknameEdit.text.toString().trim()
+            val description = if (descriptionEdit.text.toString()
+                    .trim() == srcDescription
+            ) "" else descriptionEdit.text.toString().trim()
+            ModifyUserInfo.getResponse(
+                nickname,
+                description,
+                userAvatarUri,
+                userBgImageUri,
+                object : Callback {
+                    override fun onResponse(response: Response) {
+                        if (activity == null) {
+                            return
+                        }
+                        if (!ResponseHandler.handleResponse(response)) {
+                            closeProgressDialog()
+                            val modifyUserInfo = response as ModifyUserInfo
+                            val status = modifyUserInfo.status
+                            when (status) {
+                                0 -> {
+                                    val event = ModifyUserInfoEvent()
+                                    if (srcNickname != modifyUserInfo.nickname) {
+                                        UserUtil.saveNickname(modifyUserInfo.nickname)
+                                        event.modifyNickname = true
+                                    }
+                                    if (srcDescription != modifyUserInfo.description) {
+                                        UserUtil.saveDescription(modifyUserInfo.description)
+                                        event.modifyDescription = true
+                                    }
+                                    if (srcAvatar != modifyUserInfo.avatar) {
+                                        UserUtil.saveAvatar(modifyUserInfo.avatar)
+                                        event.modifyAvatar = true
 //                                    if (!TextUtils.isEmpty(userAvatarUri)) {
 //                                        GlideUtil.saveImagePathToCache(userAvatarUri, modifyUserInfo.avatar)
 //                                    }
-                                }
-                                if (srcBgImage != modifyUserInfo.bgImage) {
-                                    UserUtil.saveBgImage(modifyUserInfo.bgImage)
-                                    event.modifyBgImage = true
+                                    }
+                                    if (srcBgImage != modifyUserInfo.bgImage) {
+                                        UserUtil.saveBgImage(modifyUserInfo.bgImage)
+                                        event.modifyBgImage = true
 //                                    if (!TextUtils.isEmpty(userBgImageUri)) {
 //                                        GlideUtil.saveImagePathToCache(userBgImageUri, modifyUserInfo.bgImage)
 //                                    }
+                                    }
+                                    EventBus.getDefault().post(event)
+
+                                    showToast(GlobalUtil.getString(R.string.save_success))
+                                    finishActivity()
                                 }
-                                EventBus.getDefault().post(event)
-
-                                showToast(GlobalUtil.getString(R.string.save_success))
-                                finishActivity()
+                                10105 -> showToast(GlobalUtil.getString(R.string.register_failed_nickname_is_used))
+                                else -> {
+                                    logWarn(
+                                        TAG,
+                                        "Modify userinfo failed. " + GlobalUtil.getResponseClue(
+                                            status,
+                                            modifyUserInfo.msg
+                                        )
+                                    )
+                                    showToast(GlobalUtil.getString(R.string.save_failed))
+                                }
                             }
-                            10105 -> showToast(GlobalUtil.getString(R.string.register_failed_nickname_is_used))
-                            else -> {
-                                logWarn(TAG, "Modify userinfo failed. " + GlobalUtil.getResponseClue(status, modifyUserInfo.msg))
-                                showToast(GlobalUtil.getString(R.string.save_failed))
-                            }
+                        } else {
+                            closeProgressDialog()
                         }
-                    } else {
-                        closeProgressDialog()
                     }
-                }
 
-                override fun onFailure(e: Exception) {
-                    logWarn(TAG, e.message, e)
-                    closeProgressDialog()
-                    ResponseHandler.handleFailure(e)
-                }
-            })
+                    override fun onFailure(e: Exception) {
+                        logWarn(TAG, e.message, e)
+                        closeProgressDialog()
+                        ResponseHandler.handleFailure(e)
+                    }
+                })
         } else {
             finishActivity()
         }
@@ -421,7 +472,8 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
      * 显示选择照片的对话框。
      */
     private fun showTakePictureDialog() {
-        val items = arrayOf<CharSequence>(getString(R.string.take_photo), getString(R.string.your_album))
+        val items =
+            arrayOf<CharSequence>(getString(R.string.take_photo), getString(R.string.your_album))
         val builder = AlertDialog.Builder(this)
         when (action) {
             TAKE_AVATAR_PICTURE -> builder.setTitle(getString(R.string.select_avatar))
@@ -478,7 +530,12 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
         if (action == TAKE_BG_IMAGE_PICTURE) {
             reqHeight = reqWidth * 5 / 7
         }
-        AlbumActivity.actionStartForResult(this@ModifyUserInfoActivity, CHOOSE_FROM_ALBUM, reqWidth, reqHeight)
+        AlbumActivity.actionStartForResult(
+            this@ModifyUserInfoActivity,
+            CHOOSE_FROM_ALBUM,
+            reqWidth,
+            reqHeight
+        )
     }
 
     /**
@@ -493,13 +550,13 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
             reqHeight = reqWidth * 5 / 7
         }
         CropImage.activity(uri)
-                .setGuidelines(CropImageView.Guidelines.ON)
-                .setFixAspectRatio(true)
-                .setAspectRatio(reqWidth, reqHeight)
-                .setActivityTitle(GlobalUtil.getString(R.string.crop))
-                .setRequestedSize(reqWidth, reqHeight)
-                .setCropMenuCropButtonIcon(R.drawable.ic_crop)
-                .start(this)
+            .setGuidelines(CropImageView.Guidelines.ON)
+            .setFixAspectRatio(true)
+            .setAspectRatio(reqWidth, reqHeight)
+            .setActivityTitle(GlobalUtil.getString(R.string.crop))
+            .setRequestedSize(reqWidth, reqHeight)
+            .setCropMenuCropButtonIcon(R.drawable.ic_crop)
+            .start(this)
     }
 
     private fun showCroppedPhoto(imageUri: Uri?) {
@@ -508,30 +565,30 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
             userAvatarUri = imageUri
             logDebug(TAG, "userAvatarPath is $userAvatarUri")
             Glide.with(this)
-                    .load(userAvatarUri)
-                    .asBitmap()
-                    .transform(CropCircleTransformation(this))
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .placeholder(R.drawable.loading_bg_circle)
-                    .error(R.drawable.avatar_default)
-                    .into(userAvatar)
+                .load(userAvatarUri)
+                .asBitmap()
+                .transform(CropCircleTransformation(this))
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .into(userAvatar)
             if (TextUtils.isEmpty(srcBgImage) && userBgImageUri == null) {
                 Glide.with(this)
-                        .load(userAvatarUri)
-                        .asBitmap()
-                        .transform(BlurTransformation(this, 20))
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .listener(userBgLoadListener)
-                        .into(userBgImage)
+                    .load(userAvatarUri)
+                    .asBitmap()
+                    .transform(BlurTransformation(this, 20))
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .listener(userBgLoadListener)
+                    .into(userBgImage)
             }
         } else if (action == TAKE_BG_IMAGE_PICTURE) {
             userBgImageUri = imageUri
             Glide.with(this)
-                    .load(userBgImageUri)
-                    .asBitmap()
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .listener(userBgLoadListener)
-                    .into(userBgImage)
+                .load(userBgImageUri)
+                .asBitmap()
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .listener(userBgLoadListener)
+                .into(userBgImage)
         }
     }
 
@@ -576,7 +633,7 @@ class ModifyUserInfoActivity : BaseActivity(), View.OnClickListener {
         if (outputImage.exists()) {
             outputImage.delete()
         }
-        val croppedDir = File(cacheDir.toString() + "/cropped")
+        val croppedDir = File("$cacheDir/cropped")
         if (croppedDir.exists()) {
             val files = croppedDir.listFiles()
             if (files != null) {

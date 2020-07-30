@@ -34,8 +34,15 @@ import com.quxianggif.user.ui.UserHomePageActivity
  * @author guolin
  * @since 17/7/25
  */
-class FollowingFeedAdapter(private val fragment: FollowingFeedsFragment, feedList: MutableList<FollowingFeed>,
-                           maxImageWidth: Int, layoutManager: RecyclerView.LayoutManager) : SimpleListFeedAdapter<FollowingFeed, Activity>(fragment.activity, feedList, maxImageWidth, layoutManager) {
+class FollowingFeedAdapter(
+    private val fragment: FollowingFeedsFragment, feedList: MutableList<FollowingFeed>,
+    maxImageWidth: Int, layoutManager: RecyclerView.LayoutManager
+) : SimpleListFeedAdapter<FollowingFeed, Activity>(
+    fragment.activity,
+    feedList,
+    maxImageWidth,
+    layoutManager
+) {
     override var isLoadFailed: Boolean = false
         get() = fragment.isLoadFailed
 
@@ -63,7 +70,14 @@ class FollowingFeedAdapter(private val fragment: FollowingFeedsFragment, feedLis
         val onUserClick = View.OnClickListener {
             val position = holder.adapterPosition
             val feed = feedList[position]
-            UserHomePageActivity.actionStart(activity, holder.avatar, feed.userId, feed.nickname, feed.avatar, feed.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                feed.userId,
+                feed.nickname,
+                feed.avatar,
+                feed.bgImage
+            )
         }
         holder.avatar.setOnClickListener(onUserClick)
         holder.nickname.setOnClickListener(onUserClick)

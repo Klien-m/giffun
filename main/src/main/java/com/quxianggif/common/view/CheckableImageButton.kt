@@ -17,6 +17,7 @@
 package com.quxianggif.common.view
 
 import android.content.Context
+import android.support.v7.widget.AppCompatImageButton
 import android.util.AttributeSet
 import android.view.SoundEffectConstants
 import android.view.View
@@ -26,7 +27,7 @@ import android.widget.ImageButton
 /**
  * An extension to [ImageButton] which implements the [Checkable] interface.
  */
-class CheckableImageButton(context: Context, attrs: AttributeSet) : ImageButton(context, attrs), Checkable {
+class CheckableImageButton(context: Context, attrs: AttributeSet) : AppCompatImageButton(context, attrs), Checkable {
 
     private var isChecked = false
 

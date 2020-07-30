@@ -60,8 +60,10 @@ import java.lang.Exception
  * @author guolin
  * @since 2018/2/15
  */
-abstract class WaterFallFeedAdapter<T : WaterFallFeed>(protected var activity: Activity, private val feedList: List<T>, private val imageWidth: Int,
-                                                       private val layoutManager: RecyclerView.LayoutManager?) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+abstract class WaterFallFeedAdapter<T : WaterFallFeed>(
+    protected var activity: Activity, private val feedList: List<T>, private val imageWidth: Int,
+    private val layoutManager: RecyclerView.LayoutManager?
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     /**
      * 获取RecyclerView数据源中元素的数量。
@@ -83,7 +85,7 @@ abstract class WaterFallFeedAdapter<T : WaterFallFeed>(protected var activity: A
     }
 
     private fun createLoadingMoreHolder(parent: ViewGroup): RecyclerView.ViewHolder {
-        val holder =  LoadingMoreViewHolder.createLoadingMoreViewHolder(activity, parent)
+        val holder = LoadingMoreViewHolder.createLoadingMoreViewHolder(activity, parent)
         holder.failed.setOnClickListener {
             onLoad()
             notifyItemChanged(itemCount - 1)
@@ -148,7 +150,14 @@ abstract class WaterFallFeedAdapter<T : WaterFallFeed>(protected var activity: A
         val userInfoListener = View.OnClickListener {
             val position = holder.adapterPosition
             val feed = feedList[position]
-            UserHomePageActivity.actionStart(activity, holder.avatar, feed.userId, feed.nickname, feed.avatar, feed.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                feed.userId,
+                feed.nickname,
+                feed.avatar,
+                feed.bgImage
+            )
         }
         holder.avatar.setOnClickListener(userInfoListener)
         holder.nickname.setOnClickListener(userInfoListener)
@@ -177,19 +186,19 @@ abstract class WaterFallFeedAdapter<T : WaterFallFeed>(protected var activity: A
         loadFeedCover(feed, holder, imageHeight)
         if (feed.avatar.isBlank()) {
             Glide.with(activity)
-                 .load(R.drawable.avatar_default)
-                 .bitmapTransform(CropCircleTransformation(activity))
-                 .placeholder(R.drawable.loading_bg_circle)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(holder.avatar)
+                .load(R.drawable.avatar_default)
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.avatar)
         } else {
             Glide.with(activity)
-                 .load(CustomUrl(feed.avatar))
-                 .bitmapTransform(CropCircleTransformation(activity))
-                 .placeholder(R.drawable.loading_bg_circle)
-                 .error(R.drawable.avatar_default)
-                 .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                 .into(holder.avatar)
+                .load(CustomUrl(feed.avatar))
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(holder.avatar)
         }
 
         if (layoutManager != null) {
@@ -252,26 +261,37 @@ abstract class WaterFallFeedAdapter<T : WaterFallFeed>(protected var activity: A
 
     private fun loadFeedCover(feed: T, holder: FeedViewHolder, imageHeight: Int) {
         Glide.with(activity)
-                .load(feed.cover)
-                .override(imageWidth, imageHeight)
-                .placeholder(R.drawable.loading_bg_rect)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .priority(Priority.IMMEDIATE)
-                .listener(object : RequestListener<String, GlideDrawable> {
-                    override fun onException(e: Exception?, model: String?, target: Target<GlideDrawable>?, isFirstResource: Boolean): Boolean {
-                        feed.coverLoaded = false
-                        feed.coverLoadFailed = true
-                        return false
-                    }
+            .load(feed.cover)
+            .override(imageWidth, imageHeight)
+            .placeholder(R.drawable.loading_bg_rect)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .priority(Priority.IMMEDIATE)
+            .listener(object : RequestListener<String, GlideDrawable> {
+                override fun onException(
+                    e: Exception?,
+                    model: String?,
+                    target: Target<GlideDrawable>?,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    feed.coverLoaded = false
+                    feed.coverLoadFailed = true
+                    return false
+                }
 
-                    override fun onResourceReady(resource: GlideDrawable?, model: String?, target: Target<GlideDrawable>?, isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-                        feed.coverLoaded = true
-                        feed.coverLoadFailed = false
-                        return false
-                    }
+                override fun onResourceReady(
+                    resource: GlideDrawable?,
+                    model: String?,
+                    target: Target<GlideDrawable>?,
+                    isFromMemoryCache: Boolean,
+                    isFirstResource: Boolean
+                ): Boolean {
+                    feed.coverLoaded = true
+                    feed.coverLoadFailed = false
+                    return false
+                }
 
-                })
-                .into(holder.feedCover)
+            })
+            .into(holder.feedCover)
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -280,7 +300,7 @@ abstract class WaterFallFeedAdapter<T : WaterFallFeed>(protected var activity: A
         if (!ViewUtils.viewsIntersect(item, fab)) return
 
         val reenter = TransitionInflater.from(activity)
-                .inflateTransition(R.transition.compose_fab_reenter)
+            .inflateTransition(R.transition.compose_fab_reenter)
         reenter.addListener(object : TransitionUtils.TransitionListenerAdapter() {
             override fun onTransitionEnd(transition: Transition) {
                 activity.window.reenterTransition = null

@@ -107,10 +107,11 @@ class DraftActivity : BaseActivity() {
         composeFab.scaleX = 0f
         composeFab.scaleY = 0f
         val animator = ObjectAnimator.ofPropertyValuesHolder(
-                composeFab,
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f))
+            composeFab,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f)
+        )
         animator.startDelay = 200
         animator.start()
     }
@@ -136,17 +137,17 @@ class DraftActivity : BaseActivity() {
             }
         } else if (item.itemId == DraftAdapter.CLEAN_DRAFT_BOX) {
             val dialog = AlertDialog.Builder(this, R.style.GifFunAlertDialogStyle)
-                    .setMessage(GlobalUtil.getString(R.string.are_you_sure_to_clean_draft_box))
-                    .setPositiveButton(GlobalUtil.getString(R.string.ok)) { _, _ ->
-                        LitePal.deleteAll<Draft>()
-                        draftList.clear()
-                        adapter.notifyDataSetChanged()
-                        if (draftList.isEmpty()) {
-                            showNoContentView()
-                        }
+                .setMessage(GlobalUtil.getString(R.string.are_you_sure_to_clean_draft_box))
+                .setPositiveButton(GlobalUtil.getString(R.string.ok)) { _, _ ->
+                    LitePal.deleteAll<Draft>()
+                    draftList.clear()
+                    adapter.notifyDataSetChanged()
+                    if (draftList.isEmpty()) {
+                        showNoContentView()
                     }
-                    .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
-                    .create()
+                }
+                .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
+                .create()
             dialog.show()
         }
         return super.onContextItemSelected(item)

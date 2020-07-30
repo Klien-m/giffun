@@ -65,7 +65,11 @@ class RecommendFollowingFragment : BaseFragment() {
      */
     internal var userList: MutableList<User> = ArrayList()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_recommend_following, container, false)
         EventBus.getDefault().register(this)
         return super.onCreateView(view)
@@ -114,8 +118,7 @@ class RecommendFollowingFragment : BaseFragment() {
             override fun onResponse(response: Response) {
                 if (!ResponseHandler.handleResponse(response)) {
                     val getRecommendFollowing = response as GetRecommendFollowing
-                    val status = getRecommendFollowing.status
-                    when (status) {
+                    when (val status = getRecommendFollowing.status) {
                         0 -> {
                             val users = getRecommendFollowing.users
                             val oldFeedsCount = userList.size
@@ -129,7 +132,13 @@ class RecommendFollowingFragment : BaseFragment() {
                             showNoContentView(GlobalUtil.getString(R.string.no_more_recommend))
                         }
                         else -> {
-                            logWarn(TAG, "Fetch recommend following failed. " + GlobalUtil.getResponseClue(status, getRecommendFollowing.msg))
+                            logWarn(
+                                TAG,
+                                "Fetch recommend following failed. " + GlobalUtil.getResponseClue(
+                                    status,
+                                    getRecommendFollowing.msg
+                                )
+                            )
                             showToast(GlobalUtil.getString(R.string.fetch_data_failed))
                             loadFailed(GlobalUtil.getString(R.string.fetch_data_failed) + ": " + response.status)
                         }

@@ -33,10 +33,14 @@ import com.quxianggif.settings.model.OpenSourceProject
  * @author guolin
  * @since 2018/6/29
  */
-class OpenSourceProjectsAdapter(val activity: Activity, private val projectList: List<OpenSourceProject>) : RecyclerView.Adapter<OpenSourceProjectsAdapter.ViewHolder>() {
+class OpenSourceProjectsAdapter(
+    val activity: Activity,
+    private val projectList: List<OpenSourceProject>
+) : RecyclerView.Adapter<OpenSourceProjectsAdapter.ViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.open_source_project_item, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.open_source_project_item, parent, false)
         val holder = ViewHolder(view)
         holder.rootLayout.setOnClickListener {
             val position = holder.adapterPosition

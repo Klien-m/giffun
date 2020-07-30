@@ -18,14 +18,7 @@
 package com.quxianggif.feeds.view
 
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
-import android.graphics.Color
-import android.graphics.Paint
-import android.graphics.Path
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffXfermode
-import android.graphics.RectF
+import android.graphics.*
 import android.os.Build
 import android.support.annotation.IntRange
 import android.util.AttributeSet
@@ -56,7 +49,11 @@ class DvProgressView : View {
         init()
     }
 
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {
+    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
         init()
     }
 
@@ -89,7 +86,14 @@ class DvProgressView : View {
         val saveLayer: Int = if (Build.VERSION.SDK_INT >= 21) {
             canvas.saveLayer(0f, 0f, viewWidth.toFloat(), viewHeight.toFloat(), paint)
         } else {
-            canvas.saveLayer(0f, 0f, viewWidth.toFloat(), viewHeight.toFloat(), paint, Canvas.ALL_SAVE_FLAG)
+            canvas.saveLayer(
+                0f,
+                0f,
+                viewWidth.toFloat(),
+                viewHeight.toFloat(),
+                paint,
+                Canvas.ALL_SAVE_FLAG
+            )
         }
         canvas.drawBitmap(bitmap, 0f, 0f, null)
         paint.xfermode = xfermode
@@ -108,9 +112,24 @@ class DvProgressView : View {
         val cornerSize = (viewWidth * 0.05).toInt()
 
         val leftTopCorner = RectF(0f, 0f, (cornerSize * 2).toFloat(), (cornerSize * 2).toFloat())
-        val rightTopCorner = RectF((dvBodyWidth - cornerSize * 2).toFloat(), 0f, dvBodyWidth.toFloat(), (cornerSize * 2).toFloat())
-        val rightBottomCorner = RectF((dvBodyWidth - cornerSize * 2).toFloat(), (dvBodyHeight - cornerSize * 2).toFloat(), dvBodyWidth.toFloat(), dvBodyHeight.toFloat())
-        val leftBottomCorner = RectF(0f, (dvBodyHeight - cornerSize * 2).toFloat(), (cornerSize * 2).toFloat(), dvBodyHeight.toFloat())
+        val rightTopCorner = RectF(
+            (dvBodyWidth - cornerSize * 2).toFloat(),
+            0f,
+            dvBodyWidth.toFloat(),
+            (cornerSize * 2).toFloat()
+        )
+        val rightBottomCorner = RectF(
+            (dvBodyWidth - cornerSize * 2).toFloat(),
+            (dvBodyHeight - cornerSize * 2).toFloat(),
+            dvBodyWidth.toFloat(),
+            dvBodyHeight.toFloat()
+        )
+        val leftBottomCorner = RectF(
+            0f,
+            (dvBodyHeight - cornerSize * 2).toFloat(),
+            (cornerSize * 2).toFloat(),
+            dvBodyHeight.toFloat()
+        )
 
         val dvPath = Path()
 
@@ -120,8 +139,14 @@ class DvProgressView : View {
 
         dvPath.lineTo(dvBodyWidth.toFloat(), ((dvBodyHeight - dvNeckHeight) / 2).toFloat())
         dvPath.lineTo(viewWidth.toFloat(), ((dvBodyHeight - dvHeadHeight) / 2).toFloat())
-        dvPath.lineTo(viewWidth.toFloat(), (dvHeadHeight + (dvBodyHeight - dvHeadHeight) / 2).toFloat())
-        dvPath.lineTo(dvBodyWidth.toFloat(), (dvNeckHeight + (dvBodyHeight - dvNeckHeight) / 2).toFloat())
+        dvPath.lineTo(
+            viewWidth.toFloat(),
+            (dvHeadHeight + (dvBodyHeight - dvHeadHeight) / 2).toFloat()
+        )
+        dvPath.lineTo(
+            dvBodyWidth.toFloat(),
+            (dvNeckHeight + (dvBodyHeight - dvNeckHeight) / 2).toFloat()
+        )
         dvPath.lineTo(dvBodyWidth.toFloat(), (dvBodyHeight - cornerSize).toFloat())
 
         dvPath.arcTo(rightBottomCorner, 0f, 90f)

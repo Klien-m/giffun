@@ -38,8 +38,7 @@ class ReportActivity : BaseActivity() {
 
     override fun setupViews() {
         setupToolbar()
-        val reportType = intent.getIntExtra(INTENT_REPORT_TYPE, 0)
-        val fragment = when (reportType) {
+        val fragment = when (intent.getIntExtra(INTENT_REPORT_TYPE, 0)) {
             REPORT_FEED -> {
                 val fragment = ReportFeedFragment()
                 fragment.feedId = intent.getLongExtra(INTENT_FEED_ID, 0L)

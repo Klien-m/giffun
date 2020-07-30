@@ -55,7 +55,11 @@ abstract class WaterFallFeedsFragment : BaseFeedsFragment(), LoadDataListener {
             return columnWidth - dp2px(18f)
         }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_water_fall_feeds, container, false)
         initViews(view)
         EventBus.getDefault().register(this)
@@ -69,7 +73,8 @@ abstract class WaterFallFeedsFragment : BaseFeedsFragment(), LoadDataListener {
 
     override fun setupRecyclerView() {
         layoutManager = StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL)
-        (layoutManager as StaggeredGridLayoutManager).gapStrategy = StaggeredGridLayoutManager.GAP_HANDLING_NONE
+        (layoutManager as StaggeredGridLayoutManager).gapStrategy =
+            StaggeredGridLayoutManager.GAP_HANDLING_NONE
         recyclerView.layoutManager = layoutManager
         recyclerView.setHasFixedSize(true)
         (recyclerView.itemAnimator as SimpleItemAnimator).supportsChangeAnimations = false

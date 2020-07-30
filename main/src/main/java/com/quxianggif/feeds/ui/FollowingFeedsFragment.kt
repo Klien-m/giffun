@@ -80,7 +80,11 @@ class FollowingFeedsFragment : BaseFeedsFragment(), LoadDataListener {
             return columnWidth - dp2px((24 + 20).toFloat())
         }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_following_feeds, container, false)
         initViews(view)
         EventBus.getDefault().register(this)
@@ -142,7 +146,8 @@ class FollowingFeedsFragment : BaseFeedsFragment(), LoadDataListener {
                 if (activity.isNeedToRefresh) {
                     isLoadingMore = true // 此处将isLoadingMore设为true，防止因为内容不满一屏自动触发加载更多事件，从而让刷新进度条提前消失
                     activity.runOnUiThread { swipeRefresh.isRefreshing = true }
-                    GifFun.getHandler().postDelayed(1000) { refreshFeeds() } // 为了能看到刷新进度条，让刷新事件延迟1.5秒执行
+                    GifFun.getHandler()
+                        .postDelayed(1000) { refreshFeeds() } // 为了能看到刷新进度条，让刷新事件延迟1秒执行
                 }
             }
         }
@@ -262,7 +267,13 @@ class FollowingFeedsFragment : BaseFeedsFragment(), LoadDataListener {
                     loadFinished()
                 }
             } else {
-                logWarn(TAG, "Fetch feeds failed. " + GlobalUtil.getResponseClue(status, fetchFollowingFeeds.msg))
+                logWarn(
+                    TAG,
+                    "Fetch feeds failed. " + GlobalUtil.getResponseClue(
+                        status,
+                        fetchFollowingFeeds.msg
+                    )
+                )
                 activity.runOnUiThread {
                     loadFailed(GlobalUtil.getString(R.string.fetch_data_failed) + ": " + response.status)
                 }
@@ -278,8 +289,8 @@ class FollowingFeedsFragment : BaseFeedsFragment(), LoadDataListener {
             swipeRefresh.visibility = View.GONE
             recyclerView.visibility = View.GONE
             showNoContentViewWithButton(GlobalUtil.getString(R.string.your_following_feeds_is_empty),
-                    GlobalUtil.getString(R.string.go_to_follow),
-                    View.OnClickListener { RecommendFollowingActivity.actionStart(activity) })
+                GlobalUtil.getString(R.string.go_to_follow),
+                View.OnClickListener { RecommendFollowingActivity.actionStart(activity) })
         } else {
             hideNoContentView()
         }

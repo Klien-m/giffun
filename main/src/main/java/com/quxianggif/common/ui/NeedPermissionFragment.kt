@@ -48,7 +48,11 @@ class NeedPermissionFragment : BaseFragment(), OnClickListener {
         mPermissions = permissions
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_need_permission, container, false)
         val agree = view.findViewById<Button>(R.id.agree)
         agree.setOnClickListener(this)
@@ -78,15 +82,18 @@ class NeedPermissionFragment : BaseFragment(), OnClickListener {
                     // 所有的权限都被勾上不再询问时，跳转到应用设置界面，引导用户手动打开权限
                     if (allNeverAskAgain) {
                         val dialog = AlertDialog.Builder(activity!!, R.style.GifFunAlertDialogStyle)
-                                .setMessage(GlobalUtil.getString(R.string.allow_storage_permission_please))
-                                .setPositiveButton(GlobalUtil.getString(R.string.settings)) { _, _ ->
-                                    val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
-                                    val uri = Uri.fromParts("package", GlobalUtil.appPackage, null)
-                                    intent.data = uri
-                                    activity!!.startActivityForResult(intent, SelectGifActivity.REQUEST_PERMISSION_SETTING)
-                                }
-                                .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
-                                .create()
+                            .setMessage(GlobalUtil.getString(R.string.allow_storage_permission_please))
+                            .setPositiveButton(GlobalUtil.getString(R.string.settings)) { _, _ ->
+                                val intent = Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS)
+                                val uri = Uri.fromParts("package", GlobalUtil.appPackage, null)
+                                intent.data = uri
+                                activity!!.startActivityForResult(
+                                    intent,
+                                    SelectGifActivity.REQUEST_PERMISSION_SETTING
+                                )
+                            }
+                            .setNegativeButton(GlobalUtil.getString(R.string.cancel), null)
+                            .create()
                         dialog.show()
                     }
                 }

@@ -156,7 +156,7 @@ object GlobalUtil {
      * 通用资源标识符
      * @return 通用资源标识符的后缀名。
      */
-    fun getUriSuffix(uri: String): String {
+    private fun getUriSuffix(uri: String): String {
         if (!TextUtils.isEmpty(uri)) {
             val doubleSlashIndex = uri.indexOf("//")
             val slashIndex = uri.lastIndexOf("/")
@@ -215,7 +215,7 @@ object GlobalUtil {
             }
             converted + "万"
         }
-        number < 100100100 -> {
+        number < 100_000_000 -> { // 大于 100 万 小于 1 亿，忽略小数位
             val converted = number / 10000
             converted.toString() + "万"
         }

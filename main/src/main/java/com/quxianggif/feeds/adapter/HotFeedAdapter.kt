@@ -23,12 +23,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
-
 import com.quxianggif.R
+import com.quxianggif.comments.ui.CommentsActivity
 import com.quxianggif.common.adapter.WaterFallFeedAdapter
 import com.quxianggif.core.model.HotFeed
 import com.quxianggif.core.util.GlobalUtil
-import com.quxianggif.comments.ui.CommentsActivity
 import com.quxianggif.feeds.ui.HotFeedsFragment
 
 /**
@@ -37,8 +36,10 @@ import com.quxianggif.feeds.ui.HotFeedsFragment
  * @author guolin
  * @since 17/5/27
  */
-class HotFeedAdapter(private val fragment: HotFeedsFragment, private val feedList: List<HotFeed>, imageWidth: Int,
-                     layoutManager: RecyclerView.LayoutManager) : WaterFallFeedAdapter<HotFeed>(fragment.activity, feedList, imageWidth, layoutManager) {
+class HotFeedAdapter(
+    private val fragment: HotFeedsFragment, private val feedList: List<HotFeed>, imageWidth: Int,
+    layoutManager: RecyclerView.LayoutManager
+) : WaterFallFeedAdapter<HotFeed>(fragment.activity, feedList, imageWidth, layoutManager) {
 
     override var isLoadFailed: Boolean = false
         get() = fragment.isLoadFailed
@@ -69,7 +70,8 @@ class HotFeedAdapter(private val fragment: HotFeedsFragment, private val feedLis
         baseBindFeedHolder(viewHolder, position)
     }
 
-    private class HotFeedViewHolder internal constructor(view: View) : WaterFallFeedAdapter.FeedViewHolder(view) {
+    private class HotFeedViewHolder internal constructor(view: View) :
+        WaterFallFeedAdapter.FeedViewHolder(view) {
 
         val commentsCount: TextView = view.findViewById(R.id.commentsCount)
 

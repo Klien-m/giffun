@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/rounded_dialog"
@@ -31,7 +30,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginRight="@dimen/dp_16"
-            android:src="@drawable/share_to_qq"/>
+            android:src="@drawable/share_to_qq" />
 
         <TextView
             android:layout_width="match_parent"
@@ -57,7 +56,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginRight="@dimen/dp_16"
-            android:src="@drawable/share_to_wechat_friend"/>
+            android:src="@drawable/share_to_wechat_friend" />
 
         <TextView
             android:layout_width="match_parent"
@@ -75,8 +74,8 @@
         android:layout_height="@dimen/dp_56"
         android:clickable="true"
         android:focusable="true"
-        android:visibility="gone"
-        android:foreground="?android:selectableItemBackground">
+        android:foreground="?android:selectableItemBackground"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="30dp"
@@ -84,7 +83,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginRight="@dimen/dp_16"
-            android:src="@drawable/share_to_wechat_memories"/>
+            android:src="@drawable/share_to_wechat_memories" />
 
         <TextView
             android:layout_width="match_parent"
@@ -110,7 +109,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginRight="@dimen/dp_16"
-            android:src="@drawable/share_to_weibo"/>
+            android:src="@drawable/share_to_weibo" />
 
         <TextView
             android:layout_width="match_parent"
@@ -137,7 +136,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="@dimen/dp_16"
             android:layout_marginRight="@dimen/dp_16"
-            android:src="@drawable/save_to_phone"/>
+            android:src="@drawable/save_to_phone" />
 
         <TextView
             android:layout_width="match_parent"

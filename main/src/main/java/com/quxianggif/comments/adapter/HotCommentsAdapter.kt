@@ -42,7 +42,10 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation
  * @author davy, guolin
  * @since 17/7/17
  */
-internal class HotCommentsAdapter(private val activity: Activity, private val comments: MutableList<Comment>) : RecyclerView.Adapter<CommentHolder>() {
+internal class HotCommentsAdapter(
+    private val activity: Activity,
+    private val comments: MutableList<Comment>
+) : RecyclerView.Adapter<CommentHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentHolder {
         val view = LayoutInflater.from(activity).inflate(R.layout.hot_comment_item, parent, false)
@@ -53,7 +56,14 @@ internal class HotCommentsAdapter(private val activity: Activity, private val co
         val onUserClick = View.OnClickListener {
             val position = holder.adapterPosition
             val comment = comments[position]
-            UserHomePageActivity.actionStart(activity, avatar, comment.userId, comment.nickname, comment.avatar, comment.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                avatar,
+                comment.userId,
+                comment.nickname,
+                comment.avatar,
+                comment.bgImage
+            )
         }
         avatar.setOnClickListener(onUserClick)
         nickname.setOnClickListener(onUserClick)
@@ -82,12 +92,12 @@ internal class HotCommentsAdapter(private val activity: Activity, private val co
         val comment = comments[position]
         val avatar = comment.avatar
         Glide.with(activity)
-                .load(CustomUrl(avatar))
-                .bitmapTransform(CropCircleTransformation(activity))
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.avatar)
+            .load(CustomUrl(avatar))
+            .bitmapTransform(CropCircleTransformation(activity))
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(holder.avatar)
         holder.nickname.text = comment.nickname
         holder.content.text = comment.content
         holder.postDate.text = DateUtil.getConvertedDate(comment.postDate)

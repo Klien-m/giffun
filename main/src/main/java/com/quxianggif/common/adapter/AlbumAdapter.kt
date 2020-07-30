@@ -90,13 +90,13 @@ open class AlbumAdapter() : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
                 val position = holder.adapterPosition
                 val image = mImageList[position]
                 CropImage.activity(image.uri)
-                        .setGuidelines(CropImageView.Guidelines.ON)
-                        .setFixAspectRatio(true)
-                        .setAspectRatio(cropWidth, cropHeight)
-                        .setActivityTitle(GlobalUtil.getString(R.string.crop))
-                        .setRequestedSize(cropWidth, cropHeight)
-                        .setCropMenuCropButtonIcon(R.drawable.ic_crop)
-                        .start(activity)
+                    .setGuidelines(CropImageView.Guidelines.ON)
+                    .setFixAspectRatio(true)
+                    .setAspectRatio(cropWidth, cropHeight)
+                    .setActivityTitle(GlobalUtil.getString(R.string.crop))
+                    .setRequestedSize(cropWidth, cropHeight)
+                    .setCropMenuCropButtonIcon(R.drawable.ic_crop)
+                    .start(activity)
             } else {
                 showToast(GlobalUtil.getString(R.string.unknown_error))
             }
@@ -104,23 +104,23 @@ open class AlbumAdapter() : RecyclerView.Adapter<AlbumAdapter.ViewHolder>() {
         return holder
     }
 
-    override fun onBindViewHolder(holder: AlbumAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.image.layoutParams.width = mImageSize
         holder.image.layoutParams.height = mImageSize
         val image = mImageList[position]
         if (image.mimeType == "image/gif") {
             Glide.with(mContext)
-                 .load(image.uri)
-                 .asBitmap()
-                 .placeholder(R.drawable.album_loading_bg)
-                 .override(mImageSize, mImageSize)
-                 .into(holder.image)
+                .load(image.uri)
+                .asBitmap()
+                .placeholder(R.drawable.album_loading_bg)
+                .override(mImageSize, mImageSize)
+                .into(holder.image)
         } else {
             Glide.with(mContext)
-                 .load(image.uri)
-                 .placeholder(R.drawable.album_loading_bg)
-                 .override(mImageSize, mImageSize)
-                 .into(holder.image)
+                .load(image.uri)
+                .placeholder(R.drawable.album_loading_bg)
+                .override(mImageSize, mImageSize)
+                .into(holder.image)
         }
     }
 

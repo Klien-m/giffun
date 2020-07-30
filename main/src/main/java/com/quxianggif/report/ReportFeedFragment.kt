@@ -43,7 +43,11 @@ class ReportFeedFragment : BaseFragment() {
 
     var feedId = 0L
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         return inflater.inflate(R.layout.fragment_report_feed, container, false)
     }
 
@@ -74,7 +78,7 @@ class ReportFeedFragment : BaseFragment() {
 
             submit.isEnabled = false
             descriptionEdit.isEnabled = false
-            ReportFeed.getResponse(feedId, selectedReason, desp, object: Callback {
+            ReportFeed.getResponse(feedId, selectedReason, desp, object : Callback {
                 override fun onResponse(response: Response) {
                     if (!ResponseHandler.handleResponse(response)) {
                         if (activity == null) {

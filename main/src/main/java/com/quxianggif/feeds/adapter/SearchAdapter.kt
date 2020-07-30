@@ -17,7 +17,6 @@
 
 package com.quxianggif.feeds.adapter
 
-import android.app.Activity
 import android.support.v4.content.ContextCompat
 import android.support.v7.widget.CardView
 import android.support.v7.widget.RecyclerView
@@ -53,7 +52,11 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation
  * @author guolin
  * @since 2018/8/2
  */
-class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableList<SearchItem>, val maxImageWidth: Int) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SearchAdapter(
+    var activity: SearchActivity,
+    private val searchItemList: MutableList<SearchItem>,
+    private val maxImageWidth: Int
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val maxImageHeight: Int = dp2px(250f)
 
@@ -90,12 +93,11 @@ class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableLis
         0
     }
 
-    override fun getItemViewType(position: Int) : Int {
+    override fun getItemViewType(position: Int): Int {
         if (position == itemCount - 1) {
             return LOADING_MORE
         }
-        val searchItem = searchItemList[position]
-        return when (searchItem) {
+        return when (searchItemList[position]) {
             is User -> SEARCH_USERS
             is BaseFeed -> SEARCH_FEEDS
             else -> throw IllegalArgumentException()
@@ -107,18 +109,25 @@ class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableLis
         notifyDataSetChanged()
     }
 
-    private fun createUserViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder {
+    private fun createUserViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(activity).inflate(R.layout.followship_item, parent, false)
         val holder = UserViewHolder(view)
         holder.rootLayout.setOnClickListener {
             val position = holder.adapterPosition
             val user = searchItemList[position] as User
-            UserHomePageActivity.actionStart(activity, holder.avatar, user.userId, user.nickname, user.avatar, user.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                user.userId,
+                user.nickname,
+                user.avatar,
+                user.bgImage
+            )
         }
         return holder
     }
 
-    private fun createFeedViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder {
+    private fun createFeedViewHolder(parent: ViewGroup): RecyclerView.ViewHolder {
         val view = LayoutInflater.from(activity).inflate(R.layout.search_feed_item, parent, false)
         val holder = FeedViewHolder(view)
         holder.cardView.setOnClickListener { v ->
@@ -130,7 +139,14 @@ class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableLis
         val userInfoListener = View.OnClickListener {
             val position = holder.adapterPosition
             val feed = searchItemList[position] as BaseFeed
-            UserHomePageActivity.actionStart(activity, holder.avatar, feed.userId, feed.nickname, feed.avatar, feed.bgImage)
+            UserHomePageActivity.actionStart(
+                activity,
+                holder.avatar,
+                feed.userId,
+                feed.nickname,
+                feed.avatar,
+                feed.bgImage
+            )
         }
         holder.avatar.setOnClickListener(userInfoListener)
         holder.nickname.setOnClickListener(userInfoListener)
@@ -150,7 +166,12 @@ class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableLis
         val builder = SpannableStringBuilder(user.nickname)
         val span = ForegroundColorSpan(ContextCompat.getColor(activity, R.color.colorPrimary))
         val index = user.nickname.toLowerCase().indexOf(activity.keyword.toLowerCase())
-        if (index != -1) builder.setSpan(span, index, index + activity.keyword.length, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        if (index != -1) builder.setSpan(
+            span,
+            index,
+            index + activity.keyword.length,
+            Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+        )
         holder.nickname.text = builder
         if (TextUtils.isEmpty(user.description)) {
             holder.description.text = GlobalUtil.getString(R.string.user_does_not_feed_anything)
@@ -158,13 +179,13 @@ class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableLis
             holder.description.text = user.description
         }
         Glide.with(activity)
-                .load(CustomUrl(user.avatar))
-                .asBitmap()
-                .transform(CropCircleTransformation(activity))
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.avatar)
+            .load(CustomUrl(user.avatar))
+            .asBitmap()
+            .transform(CropCircleTransformation(activity))
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(holder.avatar)
     }
 
     private fun bindFeedViewHolder(holder: FeedViewHolder, position: Int) {
@@ -173,29 +194,34 @@ class SearchAdapter(var activity: SearchActivity, val searchItemList: MutableLis
         holder.feedCover.layoutParams.width = imageWidth
         holder.feedCover.layoutParams.height = imageHeight
         Glide.with(activity)
-                .load(feed.cover)
-                .asBitmap()
-                .override(feed.imgWidth, feed.imgHeight)
-                .placeholder(R.drawable.loading_bg_rect)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .priority(Priority.IMMEDIATE)
-                .into(holder.feedCover)
+            .load(feed.cover)
+            .asBitmap()
+            .override(feed.imgWidth, feed.imgHeight)
+            .placeholder(R.drawable.loading_bg_rect)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .priority(Priority.IMMEDIATE)
+            .into(holder.feedCover)
 
         holder.nickname.text = feed.nickname
         val builder = SpannableStringBuilder(feed.content)
         val span = ForegroundColorSpan(ContextCompat.getColor(activity, R.color.colorPrimary))
         val index = feed.content.toLowerCase().indexOf(activity.keyword.toLowerCase())
-        if (index != -1) builder.setSpan(span, index, index + activity.keyword.length, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
+        if (index != -1) builder.setSpan(
+            span,
+            index,
+            index + activity.keyword.length,
+            Spannable.SPAN_INCLUSIVE_EXCLUSIVE
+        )
         holder.feedContent.text = builder
         holder.postDate.text = DateUtil.getConvertedDate(feed.postDate)
         Glide.with(activity)
-                .load(CustomUrl(feed.avatar))
-                .asBitmap()
-                .transform(CropCircleTransformation(activity))
-                .placeholder(R.drawable.loading_bg_circle)
-                .error(R.drawable.avatar_default)
-                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                .into(holder.avatar)
+            .load(CustomUrl(feed.avatar))
+            .asBitmap()
+            .transform(CropCircleTransformation(activity))
+            .placeholder(R.drawable.loading_bg_circle)
+            .error(R.drawable.avatar_default)
+            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+            .into(holder.avatar)
     }
 
     private fun bindLoadingMoreHolder(holder: LoadingMoreViewHolder) {

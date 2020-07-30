@@ -49,12 +49,12 @@ abstract class SplashActivity : BaseActivity() {
     /**
      * 记录进入SplashActivity的时间。
      */
-    var enterTime: Long = 0
+    private var enterTime: Long = 0
 
     /**
      * 判断是否正在跳转或已经跳转到下一个界面。
      */
-    var isForwarding = false
+    private var isForwarding = false
 
     var hasNewVersion = false
 

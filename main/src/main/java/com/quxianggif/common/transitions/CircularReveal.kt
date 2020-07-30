@@ -42,11 +42,12 @@ class CircularReveal : Visibility {
     private var center: Point? = null
     private var startRadius: Float = 0.toFloat()
     private var endRadius: Float = 0.toFloat()
+
     @IdRes
     private var centerOnId = View.NO_ID
     private var centerOn: View? = null
 
-    constructor() : super() {}
+    constructor() : super()
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
         val a = context.obtainStyledAttributes(attrs, R.styleable.CircularReveal)
@@ -84,30 +85,40 @@ class CircularReveal : Visibility {
         this.endRadius = endRadius
     }
 
-    override fun onAppear(sceneRoot: ViewGroup, view: View?,
-                          startValues: TransitionValues,
-                          endValues: TransitionValues): Animator? {
+    override fun onAppear(
+        sceneRoot: ViewGroup, view: View?,
+        startValues: TransitionValues,
+        endValues: TransitionValues
+    ): Animator? {
         if (view == null || view.height == 0 || view.width == 0) return null
         ensureCenterPoint(sceneRoot, view)
-        return AnimUtils.NoPauseAnimator(ViewAnimationUtils.createCircularReveal(
+        return AnimUtils.NoPauseAnimator(
+            ViewAnimationUtils.createCircularReveal(
                 view,
                 center!!.x,
                 center!!.y,
                 startRadius,
-                getFullyRevealedRadius(view)))
+                getFullyRevealedRadius(view)
+            )
+        )
     }
 
-    override fun onDisappear(sceneRoot: ViewGroup, view: View?,
-                             startValues: TransitionValues,
-                             endValues: TransitionValues): Animator? {
+    override fun onDisappear(
+        sceneRoot: ViewGroup, view: View?,
+        startValues: TransitionValues,
+        endValues: TransitionValues
+    ): Animator? {
         if (view == null || view.height == 0 || view.width == 0) return null
         ensureCenterPoint(sceneRoot, view)
-        return AnimUtils.NoPauseAnimator(ViewAnimationUtils.createCircularReveal(
+        return AnimUtils.NoPauseAnimator(
+            ViewAnimationUtils.createCircularReveal(
                 view,
                 center!!.x,
                 center!!.y,
                 getFullyRevealedRadius(view),
-                endRadius))
+                endRadius
+            )
+        )
     }
 
     private fun ensureCenterPoint(sceneRoot: ViewGroup, view: View) {
@@ -136,7 +147,8 @@ class CircularReveal : Visibility {
 
     private fun getFullyRevealedRadius(view: View): Float {
         return Math.hypot(
-                Math.max(center!!.x, view.width - center!!.x).toDouble(),
-                Math.max(center!!.y, view.height - center!!.y).toDouble()).toFloat()
+            Math.max(center!!.x, view.width - center!!.x).toDouble(),
+            Math.max(center!!.y, view.height - center!!.y).toDouble()
+        ).toFloat()
     }
 }

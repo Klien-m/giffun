@@ -33,8 +33,15 @@ import com.quxianggif.user.ui.UserHomePageActivity
  * @author guolin
  * @since 17/7/23
  */
-class UserFeedAdapter(override var activity: UserHomePageActivity, feedList: MutableList<UserFeed>,
-                      maxImageWidth: Int, layoutManager: RecyclerView.LayoutManager) : SimpleListFeedAdapter<UserFeed, UserHomePageActivity>(activity, feedList, maxImageWidth, layoutManager) {
+class UserFeedAdapter(
+    override var activity: UserHomePageActivity, feedList: MutableList<UserFeed>,
+    maxImageWidth: Int, layoutManager: RecyclerView.LayoutManager
+) : SimpleListFeedAdapter<UserFeed, UserHomePageActivity>(
+    activity,
+    feedList,
+    maxImageWidth,
+    layoutManager
+) {
     override var isLoadFailed: Boolean = false
         get() = activity.isLoadFailed
 

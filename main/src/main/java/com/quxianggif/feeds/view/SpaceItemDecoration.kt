@@ -31,9 +31,15 @@ import com.quxianggif.core.extension.dp2px
  * @author guolin
  * @since 17/7/31
  */
-class SpaceItemDecoration(private val adapter: RecyclerView.Adapter<*>) : RecyclerView.ItemDecoration() {
+class SpaceItemDecoration(private val adapter: RecyclerView.Adapter<*>) :
+    RecyclerView.ItemDecoration() {
 
-    override fun getItemOffsets(outRect: Rect, view: View, parent: RecyclerView, state: RecyclerView.State) {
+    override fun getItemOffsets(
+        outRect: Rect,
+        view: View,
+        parent: RecyclerView,
+        state: RecyclerView.State
+    ) {
         val position = parent.getChildAdapterPosition(view)
         val spanIndex = (view.layoutParams as StaggeredGridLayoutManager.LayoutParams).spanIndex
         val type = adapter.getItemViewType(position)

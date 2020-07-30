@@ -37,18 +37,24 @@ class FitsSystemWindowsExceptTopFrameLayout : FrameLayout {
 
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
 
-    constructor(context: Context, attrs: AttributeSet,
-                defStyleAttr: Int) : super(context, attrs, defStyleAttr)
+    constructor(
+        context: Context, attrs: AttributeSet,
+        defStyleAttr: Int
+    ) : super(context, attrs, defStyleAttr)
 
     @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    constructor(context: Context, attrs: AttributeSet,
-                defStyleAttr: Int, defStyleRes: Int) : super(context, attrs, defStyleAttr, defStyleRes) {
+    constructor(
+        context: Context, attrs: AttributeSet,
+        defStyleAttr: Int, defStyleRes: Int
+    ) : super(context, attrs, defStyleAttr, defStyleRes) {
     }
 
     override fun onApplyWindowInsets(insets: WindowInsets): WindowInsets {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            setPadding(insets.systemWindowInsetLeft, 0, insets.systemWindowInsetRight,
-                    insets.systemWindowInsetBottom)
+            setPadding(
+                insets.systemWindowInsetLeft, 0, insets.systemWindowInsetRight,
+                insets.systemWindowInsetBottom
+            )
             return insets.replaceSystemWindowInsets(0, insets.systemWindowInsetTop, 0, 0)
         } else {
             return super.onApplyWindowInsets(insets)

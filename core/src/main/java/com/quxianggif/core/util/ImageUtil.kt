@@ -46,7 +46,7 @@ object ImageUtil {
      * 图片的路径
      * @return 以枚举格式返回图片的类型，如果传入的图片格式有问题，或者图片不存在，一律返回null。
      */
-    fun getImageType(imagePath: String): ImageHeaderParser.ImageType? {
+    private fun getImageType(imagePath: String): ImageHeaderParser.ImageType? {
         val file = File(imagePath)
         var fis: FileInputStream? = null
         try {
@@ -178,9 +178,7 @@ object ImageUtil {
             logWarn(TAG, e.message.toString(), e)
         } finally {
             try {
-                if (fis != null) {
-                    fis.close()
-                }
+                fis?.close()
             } catch (e: IOException) {
                 logWarn(TAG, e.message.toString(), e)
             }

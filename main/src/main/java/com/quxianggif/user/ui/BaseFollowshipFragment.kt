@@ -85,7 +85,11 @@ abstract class BaseFollowshipFragment : BaseFragment(), LoadDataListener {
     private val isCurrentUserFollowship: Boolean
         get() = activity.mUserId == GifFun.getUserId()
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_followship, container, false)
         recyclerView = view.findViewById(R.id.recyclerView)
         return super.onCreateView(view)
@@ -154,7 +158,13 @@ abstract class BaseFollowshipFragment : BaseFragment(), LoadDataListener {
                     loadFinished()
                 }
                 else -> {
-                    logWarn(TAG, "Fetch followships failed. " + GlobalUtil.getResponseClue(status, getFollowshipBase.msg))
+                    logWarn(
+                        TAG,
+                        "Fetch followships failed. " + GlobalUtil.getResponseClue(
+                            status,
+                            getFollowshipBase.msg
+                        )
+                    )
                     showToast(GlobalUtil.getString(R.string.fetch_data_failed))
                     loadFailed(GlobalUtil.getString(R.string.fetch_data_failed) + ": " + response.status)
                 }
@@ -202,7 +212,9 @@ abstract class BaseFollowshipFragment : BaseFragment(), LoadDataListener {
                     startLoading()
                     loadFollowships(page)
                 }
-                showBadNetworkView(View.OnClickListener { GifFun.getHandler().postDelayed(refresh, 300) })
+                showBadNetworkView(View.OnClickListener {
+                    GifFun.getHandler().postDelayed(refresh, 300)
+                })
             } else {
                 showLoadErrorView(msg!!)
             }

@@ -98,29 +98,37 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     internal var isNeedToRefresh = false
 
-    private var navHeaderBgLoadListener: RequestListener<Any, GlideDrawable> = object : RequestListener<Any, GlideDrawable> {
+    private var navHeaderBgLoadListener: RequestListener<Any, GlideDrawable> =
+        object : RequestListener<Any, GlideDrawable> {
 
-        override fun onException(e: Exception?, model: Any, target: Target<GlideDrawable>, isFirstResource: Boolean): Boolean {
-            return false
-        }
-
-        override fun onResourceReady(glideDrawable: GlideDrawable?, model: Any, target: Target<GlideDrawable>,
-                                     isFromMemoryCache: Boolean, isFirstResource: Boolean): Boolean {
-            if (glideDrawable == null) {
+            override fun onException(
+                e: Exception?,
+                model: Any,
+                target: Target<GlideDrawable>,
+                isFirstResource: Boolean
+            ): Boolean {
                 return false
             }
-            val bitmap = glideDrawable.toBitmap()
-            val bitmapWidth = bitmap.width
-            val bitmapHeight = bitmap.height
-            if (bitmapWidth <= 0 || bitmapHeight <= 0) {
-                return false
-            }
-            val left = (bitmapWidth * 0.2).toInt()
-            val right = bitmapWidth - left
-            val top = bitmapHeight / 2
-            val bottom = bitmapHeight - 1
-            logDebug(TAG, "text area top $top , bottom $bottom , left $left , right $right")
-            Palette.from(bitmap)
+
+            override fun onResourceReady(
+                glideDrawable: GlideDrawable?, model: Any, target: Target<GlideDrawable>,
+                isFromMemoryCache: Boolean, isFirstResource: Boolean
+            ): Boolean {
+                if (glideDrawable == null) {
+                    return false
+                }
+                val bitmap = glideDrawable.toBitmap()
+                val bitmapWidth = bitmap.width
+                val bitmapHeight = bitmap.height
+                if (bitmapWidth <= 0 || bitmapHeight <= 0) {
+                    return false
+                }
+                val left = (bitmapWidth * 0.2).toInt()
+                val right = bitmapWidth - left
+                val top = bitmapHeight / 2
+                val bottom = bitmapHeight - 1
+                logDebug(TAG, "text area top $top , bottom $bottom , left $left , right $right")
+                Palette.from(bitmap)
                     .maximumColorCount(3)
                     .clearFilters()
                     .setRegion(left, top, right, bottom) // 测量图片下半部分的颜色，以确定用户信息的颜色
@@ -136,9 +144,9 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
                         descriptionMe.setTextColor(color)
                         editImage.setColorFilter(color, android.graphics.PorterDuff.Mode.MULTIPLY)
                     }
-            return false
+                return false
+            }
         }
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -170,7 +178,7 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     private fun checkIsNeedToRefresh() {
         val autoRefresh = PreferenceManager.getDefaultSharedPreferences(this)
-                .getBoolean(GlobalUtil.getString(R.string.key_auto_refresh), true)
+            .getBoolean(GlobalUtil.getString(R.string.key_auto_refresh), true)
         if (autoRefresh) {
             val lastUseTime = SharedUtil.read(Const.Feed.MAIN_LAST_USE_TIME, 0L)
             val timeNotUsed = System.currentTimeMillis() - lastUseTime
@@ -209,36 +217,47 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             if (TextUtils.isEmpty(description)) {
                 descriptionMe.text = GlobalUtil.getString(R.string.edit_description)
             } else {
-                descriptionMe.text = String.format(GlobalUtil.getString(R.string.description_content), description)
+                descriptionMe.text =
+                    String.format(GlobalUtil.getString(R.string.description_content), description)
             }
             Glide.with(this)
-                    .load(CustomUrl(avatar))
-                    .bitmapTransform(CropCircleTransformation(activity))
-                    .placeholder(R.drawable.loading_bg_circle)
-                    .error(R.drawable.avatar_default)
-                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                    .into(avatarMe)
+                .load(CustomUrl(avatar))
+                .bitmapTransform(CropCircleTransformation(activity))
+                .placeholder(R.drawable.loading_bg_circle)
+                .error(R.drawable.avatar_default)
+                .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                .into(avatarMe)
 
             if (TextUtils.isEmpty(bgImage)) {
                 if (!TextUtils.isEmpty(avatar)) {
                     Glide.with(this)
-                            .load(CustomUrl(avatar))
-                            .bitmapTransform(BlurTransformation(this, 15))
-                            .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                            .listener(navHeaderBgLoadListener)
-                            .into(navHeaderBg)
+                        .load(CustomUrl(avatar))
+                        .bitmapTransform(BlurTransformation(this, 15))
+                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                        .listener(navHeaderBgLoadListener)
+                        .into(navHeaderBg)
                 }
             } else {
                 val bgImageWidth = navView.width
-                val bgImageHeight = dp2px((250 + 25).toFloat() /* 25为补偿系统状态栏高度，不加这个高度值图片顶部会出现状态栏的底色 */)
+                val bgImageHeight =
+                    dp2px((250 + 25).toFloat() /* 25为补偿系统状态栏高度，不加这个高度值图片顶部会出现状态栏的底色 */)
                 Glide.with(this)
-                        .load(bgImage)
-                        .diskCacheStrategy(DiskCacheStrategy.SOURCE)
-                        .override(bgImageWidth, bgImageHeight)
-                        .listener(navHeaderBgLoadListener)
-                        .into(navHeaderBg)
+                    .load(bgImage)
+                    .diskCacheStrategy(DiskCacheStrategy.SOURCE)
+                    .override(bgImageWidth, bgImageHeight)
+                    .listener(navHeaderBgLoadListener)
+                    .into(navHeaderBg)
             }
-            userLayout.setOnClickListener { UserHomePageActivity.actionStart(this@MainActivity, avatarMe, GifFun.getUserId(), nickname, avatar, bgImage) }
+            userLayout.setOnClickListener {
+                UserHomePageActivity.actionStart(
+                    this@MainActivity,
+                    avatarMe,
+                    GifFun.getUserId(),
+                    nickname,
+                    avatar,
+                    bgImage
+                )
+            }
             descriptionLayout.setOnClickListener { ModifyUserInfoActivity.actionEditDescription(this@MainActivity) }
         }
     }
@@ -256,7 +275,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         }
         viewPager.currentItem = currentPagerPosition
         viewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {}
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
+            }
 
             override fun onPageSelected(position: Int) {
                 currentPagerPosition = position
@@ -276,10 +300,11 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         composeFab.scaleX = 0f
         composeFab.scaleY = 0f
         val animator = ObjectAnimator.ofPropertyValuesHolder(
-                composeFab,
-                PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
-                PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f))
+            composeFab,
+            PropertyValuesHolder.ofFloat(View.ALPHA, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_X, 1f),
+            PropertyValuesHolder.ofFloat(View.SCALE_Y, 1f)
+        )
         animator.startDelay = 200
         animator.start()
     }
@@ -293,10 +318,10 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             t.alpha = 0f
             t.scaleX = 0.8f
             t.animate()
-             .alpha(1f)
-             .scaleX(1f)
-             .setStartDelay(300)
-             .setDuration(900).interpolator = AnimUtils.getFastOutSlowInInterpolator(this)
+                .alpha(1f)
+                .scaleX(1f)
+                .setStartDelay(300)
+                .setDuration(900).interpolator = AnimUtils.getFastOutSlowInInterpolator(this)
         }
     }
 
@@ -327,7 +352,12 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
         } else {
             val now = System.currentTimeMillis()
             if (now - backPressTime > 2000) {
-                showToast(String.format(GlobalUtil.getString(R.string.press_again_to_exit), GlobalUtil.appName))
+                showToast(
+                    String.format(
+                        GlobalUtil.getString(R.string.press_again_to_exit),
+                        GlobalUtil.appName
+                    )
+                )
                 backPressTime = now
             } else {
                 super.onBackPressed()
@@ -347,13 +377,20 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
             R.id.menu_search -> {
                 if (AndroidVersion.hasLollipopMR1()) { // Android 5.0版本启用transition动画会存在一些效果上的异常，因此这里只在Android 5.1以上启用此动画
                     val searchMenuView: View? = toolbar?.findViewById(R.id.menu_search)
-                    val options = ActivityOptions.makeSceneTransitionAnimation(this, searchMenuView,
-                            getString(R.string.transition_search_back)).toBundle()
-                    startActivityForResult(Intent(this, SearchActivity::class.java), REQUEST_SEARCH, options)
+                    val options = ActivityOptions.makeSceneTransitionAnimation(
+                        this, searchMenuView,
+                        getString(R.string.transition_search_back)
+                    ).toBundle()
+                    startActivityForResult(
+                        Intent(this, SearchActivity::class.java),
+                        REQUEST_SEARCH,
+                        options
+                    )
                 } else {
                     startActivityForResult(Intent(this, SearchActivity::class.java), REQUEST_SEARCH)
                 }
-                composeFab.visibility = View.GONE // 当进入搜索界面键盘弹出时，composeFab会随着键盘往上偏移。暂时没查到原因，使用隐藏的方式先进行规避
+                composeFab.visibility =
+                    View.GONE // 当进入搜索界面键盘弹出时，composeFab会随着键盘往上偏移。暂时没查到原因，使用隐藏的方式先进行规避
             }
         }
         return true
@@ -384,14 +421,19 @@ class MainActivity : BaseActivity(), NavigationView.OnNavigationItemSelectedList
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.compose -> GifFun.getHandler().postDelayed(300){ PostFeedActivity.actionStart(this) }
+            R.id.compose -> GifFun.getHandler()
+                .postDelayed(300) { PostFeedActivity.actionStart(this) }
             R.id.user_home -> GifFun.getHandler().postDelayed(300) {
-                UserHomePageActivity.actionStart(this, avatarMe, GifFun.getUserId(),
-                        UserUtil.nickname, UserUtil.avatar, UserUtil.bgImage)
+                UserHomePageActivity.actionStart(
+                    this, avatarMe, GifFun.getUserId(),
+                    UserUtil.nickname, UserUtil.avatar, UserUtil.bgImage
+                )
             }
             R.id.draft -> GifFun.getHandler().postDelayed(300) { DraftActivity.actionStart(this) }
-            R.id.recommend_following -> GifFun.getHandler().postDelayed(300) { RecommendFollowingActivity.actionStart(this) }
-            R.id.settings -> GifFun.getHandler().postDelayed(300) { SettingsActivity.actionStart(this) }
+            R.id.recommend_following -> GifFun.getHandler()
+                .postDelayed(300) { RecommendFollowingActivity.actionStart(this) }
+            R.id.settings -> GifFun.getHandler()
+                .postDelayed(300) { SettingsActivity.actionStart(this) }
         }
         GifFun.getHandler().post {
             uncheckNavigationItems()

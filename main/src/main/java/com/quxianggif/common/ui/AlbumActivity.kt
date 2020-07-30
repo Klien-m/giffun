@@ -53,17 +53,19 @@ class AlbumActivity : BaseActivity() {
     }
 
     private fun refreshPermissionStatus() {
-        handlePermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), object : PermissionListener {
-            override fun onGranted() {
-                permissionsGranted()
-            }
+        handlePermissions(
+            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+            object : PermissionListener {
+                override fun onGranted() {
+                    permissionsGranted()
+                }
 
-            override fun onDenied(deniedPermissions: List<String>) {
-                val fragment = NeedPermissionFragment()
-                fragment.setPermissions(deniedPermissions.toTypedArray())
-                replaceFragment(fragment)
-            }
-        })
+                override fun onDenied(deniedPermissions: List<String>) {
+                    val fragment = NeedPermissionFragment()
+                    fragment.setPermissions(deniedPermissions.toTypedArray())
+                    replaceFragment(fragment)
+                }
+            })
     }
 
     override fun permissionsGranted() {
@@ -114,7 +116,12 @@ class AlbumActivity : BaseActivity() {
 
         const val CROP_HEIGHT = "crop_height"
 
-        fun actionStartForResult(activity: Activity, requestCode: Int, cropWidth: Int, cropHeight: Int) {
+        fun actionStartForResult(
+            activity: Activity,
+            requestCode: Int,
+            cropWidth: Int,
+            cropHeight: Int
+        ) {
             val intent = Intent(activity, AlbumActivity::class.java)
             intent.putExtra(CROP_WIDTH, cropWidth)
             intent.putExtra(CROP_HEIGHT, cropHeight)
